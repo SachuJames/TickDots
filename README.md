@@ -184,6 +184,30 @@ Exit codes:
 | 5 | Invalid session configuration, or the replay itself failed (in strict mode the diagnostic names the error and the event position). |
 | 6 | An unexpected internal exception. |
 
+## Performance benchmarks
+
+The benchmark suite lives in `bench/` and builds as
+`tickforge_bench`. It measures deterministic workloads (insertion,
+cancellation, modification, matching, a mixed generated session,
+the parse and replay pipeline, and latency-observer overhead)
+with warm-ups and repeated measurements.
+
+```console
+$ cmake --preset release
+$ cmake --build --preset release
+$ ./build-release/tickforge_bench                 # full suite, text output
+$ ./build-release/tickforge_bench --format csv    # one CSV row per benchmark
+$ ./build-release/tickforge_bench --workload mixed --size 50000 --repetitions 5
+```
+
+Use a Release build for meaningful numbers; a Debug build measures
+a different program. Results depend on the machine and its load,
+so compare runs taken on the same machine in the same build
+configuration, and treat any single run as an observation, not a
+guarantee. The methodology is documented in ARCHITECTURE.md
+section 28. Benchmarks measure speed only; correctness is covered
+by the test suite.
+
 ## Input format
 
 The first line must be exactly this header. Whitespace at the ends of

@@ -1570,3 +1570,58 @@ determined by Day 24's serialization. For the documented example
 (seed 42, bounds 1000 to 1999) it is 5212b75c2e1ebc7f, reproduced
 independently from the canonical text with a separate FNV-1a
 implementation and pinned by an exact-output process test.
+
+## 28. Benchmark infrastructure (Day 26)
+
+A dedicated benchmark executable, tickforge_bench, measures the
+production components without touching them. Layout: bench/
+holds a small static library (tickforge_bench_lib) with the
+measurement harness and the workload definitions, plus a thin
+main. It links the production libraries and, for the mixed
+workload, the generation-version-1 event generator from test
+support; the generator internally uses the reference book to
+construct valid lifecycles, but no benchmark check relies on the
+reference book. Nothing in bench/ is installed, and the
+production libraries gain no dependency from it.
+
+Workloads are deterministic: the hand-built ones draw from the
+production SplitMix64 with the workload's seed, and the mixed
+session is generation version 1 with documented parameters
+(prices 80-120, quantities 1-50, weights 55/20/25). Each workload
+has a stable identity string built from its parameters. Workloads
+with by-construction outcomes (add, cancel, modify, match) carry
+expected fill and resting counts, and every constructed event is
+checked against validateEvent at build time; the driver runs one
+untimed verification pass against the declared expectations
+before any timing.
+
+Measurement boundary: a workload splits into set-up events
+(applied while preparing a repetition, untimed) and measured
+events (the only timed part). Each repetition prepares fresh
+state, so warm-ups and repetitions are independent. The protocol
+runs a configurable number of warm-ups (default 2, durations
+discarded) and measured repetitions (default 7); every
+repetition's outcome (events, fills, samples, resting count) must
+equal the first, or the benchmark fails rather than reporting a
+number. Statistics are min, median, mean, max, and the sample
+standard deviation over the measured durations; throughput is
+derived from the median duration. Average time per event is an
+aggregate over the whole timed region, not a per-event latency
+percentile.
+
+The suite: add-heavy (non-crossing insertions, by construction),
+cancel-heavy (90% of a prepared population), modify-heavy (half
+quantity decreases, half price replacements), match-heavy (a
+resting ladder swept by two crossing bids; its cost is
+fill-dominated, so fills per second is the meaningful figure),
+mixed (generation version 1 through the engine), parse-only (the
+same events as CSV text through CsvParser), parse-replay (parse
+plus configured replay), and latency-overhead (the mixed events
+through the LatencyObserver, comparable against mixed).
+
+Output is a text report by default and CSV with --format csv
+(one row per benchmark, stable field order, quoted where needed).
+Each run records the TickForge version, the commit the build was
+configured from, the compiler, and the build type. Timing is an
+observed quantity: it varies with the machine and its load, and
+results from different environments are not directly comparable.
