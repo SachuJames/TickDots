@@ -151,6 +151,36 @@ include(GNUInstallDirs)
 install(TARGETS tickforge RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # ---------------------------------------------------------------------------
+# Benchmark executable: deterministic workloads and a dependency-free
+# measurement harness (bench/). Links the production libraries plus
+# the generation-version-1 event generator from test support (which
+# internally uses the reference book to construct valid lifecycles;
+# the benchmark's own checks do not rely on it). The bench is not
+# installed and adds no dependency to the production libraries.
+# ---------------------------------------------------------------------------
+execute_process(COMMAND git rev-parse --short HEAD
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                OUTPUT_VARIABLE TICKFORGE_GIT_COMMIT
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(NOT TICKFORGE_GIT_COMMIT)
+  set(TICKFORGE_GIT_COMMIT "unknown")
+endif()
+if(NOT CMAKE_BUILD_TYPE)
+  set(TICKFORGE_BENCH_BUILD_TYPE "unspecified")
+else()
+  set(TICKFORGE_BENCH_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+endif()
+add_library(tickforge_bench_lib STATIC bench/harness.cpp bench/workloads.cpp tests/support/event_generator.cpp tests/support/reference_model.cpp)
+target_include_directories(tickforge_bench_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tickforge_bench_lib PUBLIC tickforge_core tickforge_event tickforge_replay tickforge_book tickforge_matching tickforge_market_data tickforge_model)
+target_compile_definitions(tickforge_bench_lib PRIVATE
+  TICKFORGE_BENCH_COMMIT="${TICKFORGE_GIT_COMMIT}"
+  TICKFORGE_BENCH_COMPILER="${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
+  TICKFORGE_BENCH_BUILD_TYPE="${TICKFORGE_BENCH_BUILD_TYPE}")
+add_executable(tickforge_bench bench/main.cpp)
+target_link_libraries(tickforge_bench PRIVATE tickforge_bench_lib)
+
+# ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
 option(TICKFORGE_BUILD_TESTS "Build TickForge unit tests" ON)
@@ -202,6 +232,7 @@ if(TICKFORGE_BUILD_TESTS)
     tests/test_session_scale.cpp
     tests/test_seeded_generation.cpp
     tests/test_latency_model.cpp
+    tests/test_benchmark.cpp
     tests/test_price_boundaries.cpp
     tests/test_property_matching.cpp
     tests/test_property_analytics.cpp
@@ -212,7 +243,7 @@ if(TICKFORGE_BUILD_TESTS)
     tests/support/csv_generator.cpp
   )
   target_include_directories(tickforge_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-  target_link_libraries(tickforge_tests PRIVATE tickforge_core tickforge_event tickforge_replay tickforge_book tickforge_matching tickforge_analytics tickforge_market_data tickforge_model GTest::gtest_main)
+  target_link_libraries(tickforge_tests PRIVATE tickforge_core tickforge_event tickforge_replay tickforge_book tickforge_matching tickforge_analytics tickforge_market_data tickforge_model tickforge_bench_lib GTest::gtest_main)
   # Process-boundary tests (test_cli.cpp) launch the real executable.
   target_compile_definitions(tickforge_tests PRIVATE TICKFORGE_EXE_PATH="$<TARGET_FILE:tickforge>")
   target_compile_definitions(tickforge_tests PRIVATE TICKFORGE_EXAMPLE_CSV="${CMAKE_SOURCE_DIR}/examples/sample_session.csv")
