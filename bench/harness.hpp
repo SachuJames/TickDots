@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::bench {
+namespace tickdots::bench {
 
 // The observable result of one benchmark repetition. Repetitions of
 // the same benchmark must produce identical outcomes; the runner
@@ -113,4 +113,4 @@ void printTextResult(std::ostream& out, const BenchResult& result);
 [[nodiscard]] std::string csvHeader();
 [[nodiscard]] std::string csvRow(const BenchResult& result, const Metadata& metadata);
 
-} // namespace tickforge::bench
+} // namespace tickdots::bench

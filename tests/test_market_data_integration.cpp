@@ -4,14 +4,14 @@
 // Analytics. Proves the parser is a clean input boundary producing the
 // same results as directly constructed events.
 
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -21,22 +21,22 @@
 
 namespace {
 
-using tickforge::CsvParser;
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::ExecutionStatistics;
-using tickforge::Fill;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::ParseError;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::QueueTracker;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::StreamResult;
-using tickforge::Timestamp;
+using tickdots::CsvParser;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::ExecutionStatistics;
+using tickdots::Fill;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::ParseError;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::QueueTracker;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::StreamResult;
+using tickdots::Timestamp;
 
 // Golden fixture (mirrors testdata/market_data/sample.csv).
 const char* sample_csv = "timestamp,event_type,order_id,side,price,quantity\n"

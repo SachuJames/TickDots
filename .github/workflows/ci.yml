@@ -1,4 +1,4 @@
-# TickForge CI: configure, build, test, format check, sanitizers.
+# TickDots CI: configure, build, test, format check, sanitizers.
 # Runs on every push and pull request.
 
 name: CI

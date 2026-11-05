@@ -4,7 +4,7 @@
 // OrderId, Price, Quantity. These types are pure values; semantic
 // validation lives in validateEvent(), not in the constructors.
 
-#include "tickforge/event/types.hpp"
+#include "tickdots/event/types.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -13,11 +13,11 @@
 
 namespace {
 
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Timestamp;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Timestamp;
 
 TEST(TimestampTest, ConstructionRoundTrips) {
   const Timestamp ts{1234567890};

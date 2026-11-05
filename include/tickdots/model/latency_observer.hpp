@@ -9,13 +9,13 @@
 
 #pragma once
 
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/model/latency_model.hpp"
-#include "tickforge/replay/event_processor.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/model/latency_model.hpp"
+#include "tickdots/replay/event_processor.hpp"
 
 #include <utility>
 
-namespace tickforge {
+namespace tickdots {
 
 class LatencyObserver : public EventProcessor {
 public:
@@ -42,4 +42,4 @@ private:
   LatencyModel model_;
 };
 
-} // namespace tickforge
+} // namespace tickdots

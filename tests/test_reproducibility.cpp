@@ -19,17 +19,17 @@
 // normalized stream as the reproducibility boundary but requires no
 // stream identifier; SPEC.md 9.6 requires only version + config hash.
 
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/event_processor.hpp"
-#include "tickforge/replay/replay.hpp"
-#include "tickforge/replay/session_config.hpp"
-#include "tickforge/version.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/event_processor.hpp"
+#include "tickdots/replay/replay.hpp"
+#include "tickdots/replay/session_config.hpp"
+#include "tickdots/version.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -42,20 +42,20 @@
 
 namespace {
 
-using tickforge::CsvParser;
-using tickforge::Event;
-using tickforge::EventProcessor;
-using tickforge::ExecutionStatistics;
-using tickforge::Fill;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::ParseError;
-using tickforge::Price;
-using tickforge::QueueTracker;
-using tickforge::ReplayResult;
-using tickforge::SessionConfig;
-using tickforge::Side;
+using tickdots::CsvParser;
+using tickdots::Event;
+using tickdots::EventProcessor;
+using tickdots::ExecutionStatistics;
+using tickdots::Fill;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::ParseError;
+using tickdots::Price;
+using tickdots::QueueTracker;
+using tickdots::ReplayResult;
+using tickdots::SessionConfig;
+using tickdots::Side;
 
 // A session that crosses the spread, partially fills, cancels, and
 // modifies: exercises matching, book mutation, and statistics.
@@ -174,7 +174,7 @@ PipelineOutcome runPipeline(const SessionConfig& config) {
   };
   TrackingAdapter adapter(audited, tracker, engine);
 
-  outcome.result = tickforge::replayEvents(parsed.events, adapter, config);
+  outcome.result = tickdots::replayEvents(parsed.events, adapter, config);
   EXPECT_TRUE(outcome.result.ok());
   if (!outcome.result.ok()) {
     return outcome;
@@ -292,12 +292,12 @@ TEST(ReproducibilityAuditTest, MetadataConsistentWithConfig) {
 
   ASSERT_TRUE(outcome.result.ok());
   // SPEC.md 9.6: version and config hash identify the run.
-  EXPECT_EQ(outcome.result.version, tickforge::kVersion);
-  EXPECT_EQ(outcome.result.configHash, std::optional<std::uint64_t>(tickforge::hashConfig(config)));
+  EXPECT_EQ(outcome.result.version, tickdots::kVersion);
+  EXPECT_EQ(outcome.result.configHash, std::optional<std::uint64_t>(tickdots::hashConfig(config)));
   // The hash is over the canonical serialization, not memory.
   EXPECT_EQ(outcome.result.configHash,
-            std::optional<std::uint64_t>(tickforge::hashConfig(
-                tickforge::deserializeConfig(tickforge::serializeConfig(config)).config)));
+            std::optional<std::uint64_t>(tickdots::hashConfig(
+                tickdots::deserializeConfig(tickdots::serializeConfig(config)).config)));
 }
 
 TEST(ReproducibilityAuditTest, DifferentConfigDifferentHash) {
@@ -305,7 +305,7 @@ TEST(ReproducibilityAuditTest, DifferentConfigDifferentHash) {
   const PipelineOutcome first = runPipeline(config);
 
   SessionConfig lenient = makeAuditConfig();
-  lenient.mode = tickforge::ReplayMode::Lenient;
+  lenient.mode = tickdots::ReplayMode::Lenient;
   const PipelineOutcome second = runPipeline(lenient);
 
   ASSERT_TRUE(first.result.ok());
@@ -315,7 +315,7 @@ TEST(ReproducibilityAuditTest, DifferentConfigDifferentHash) {
   expectFillsEqual(first.fills, second.fills);
   EXPECT_EQ(first.bookOrderCount, second.bookOrderCount);
   EXPECT_NE(first.result.configHash, second.result.configHash);
-  EXPECT_EQ(second.result.mode, tickforge::ReplayMode::Lenient);
+  EXPECT_EQ(second.result.mode, tickdots::ReplayMode::Lenient);
 }
 
 } // namespace

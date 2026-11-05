@@ -5,13 +5,13 @@
 // analytical observers. Proves the full pipeline is deterministic and
 // that analytics never perturb matching.
 
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -19,19 +19,19 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::ExecutionStatistics;
-using tickforge::Fill;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::QueueTracker;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::ExecutionStatistics;
+using tickdots::Fill;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::QueueTracker;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event newOrderEvent(Sequence seq, OrderId id, Side side, Price price, Quantity quantity) {
   Event event;

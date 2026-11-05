@@ -7,7 +7,7 @@
 
 #include "bench/harness.hpp"
 #include "bench/workloads.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cmath>
 #include <gtest/gtest.h>
@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::bench {
+namespace tickdots::bench {
 namespace {
 
 // ---------------------------------------------------------------------
@@ -279,4 +279,4 @@ TEST(BenchWorkloads, CsvRoundTripMatchesDirectReplay) {
 }
 
 } // namespace
-} // namespace tickforge::bench
+} // namespace tickdots::bench

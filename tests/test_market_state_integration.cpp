@@ -4,11 +4,11 @@
 // OrderBook -> MarketStateView. Proves the derived state pipeline is
 // deterministic and matches the direct event pipeline.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/market_data/market_state.hpp"
-#include "tickforge/matching/matching_engine.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/market_data/market_state.hpp"
+#include "tickdots/matching/matching_engine.hpp"
 
 #include <gtest/gtest.h>
 #include <optional>
@@ -18,17 +18,17 @@
 
 namespace {
 
-using tickforge::CsvParser;
-using tickforge::Event;
-using tickforge::LevelAggregate;
-using tickforge::MarketStateView;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::ParseError;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Side;
-using tickforge::StreamResult;
+using tickdots::CsvParser;
+using tickdots::Event;
+using tickdots::LevelAggregate;
+using tickdots::MarketStateView;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::ParseError;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Side;
+using tickdots::StreamResult;
 
 // Golden fixture (mirrors testdata/market_data/depth_sample.csv).
 // No crossing: pure state construction, then a cancel removing a level.

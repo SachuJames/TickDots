@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
 // Executable process-boundary verification for the CLI contract in
-// SPEC.md section 13. The harness launches the real `tickforge`
+// SPEC.md section 13. The harness launches the real `tickdots`
 // binary with fork/exec and pipes (no shell), captures stdout and
 // stderr separately, and reaps the child with a bounded wait.
 //
@@ -9,8 +9,8 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/replay/session_config.hpp"
-#include "tickforge/version.hpp"
+#include "tickdots/replay/session_config.hpp"
+#include "tickdots/version.hpp"
 
 #include <array>
 #include <csignal>
@@ -28,8 +28,8 @@
 #include <unistd.h>
 #include <vector>
 
-#ifndef TICKFORGE_EXE_PATH
-#error "TICKFORGE_EXE_PATH must be defined by CMake (path to the tickforge executable)"
+#ifndef TICKDOTS_EXE_PATH
+#error "TICKDOTS_EXE_PATH must be defined by CMake (path to the tickdots executable)"
 #endif
 
 namespace {
@@ -79,7 +79,7 @@ ProcResult runExe(const std::vector<std::string>& args, const std::string& cwd =
       const int rc = ::chdir(cwd.c_str());
       (void)rc;
     }
-    std::vector<std::string> all{TICKFORGE_EXE_PATH};
+    std::vector<std::string> all{TICKDOTS_EXE_PATH};
     all.insert(all.end(), args.begin(), args.end());
     std::vector<char*> argv;
     argv.reserve(all.size() + 1);
@@ -87,7 +87,7 @@ ProcResult runExe(const std::vector<std::string>& args, const std::string& cwd =
       argv.push_back(s.data());
     }
     argv.push_back(nullptr);
-    ::execv(TICKFORGE_EXE_PATH, argv.data());
+    ::execv(TICKDOTS_EXE_PATH, argv.data());
     ::_exit(127);
   }
 
@@ -181,7 +181,7 @@ TEST(CliHelp, UnknownOptionStillFails) {
 TEST(CliVersion, PrintsVersionAndExitsZero) {
   const ProcResult result = runExe({"--version"});
   EXPECT_EQ(result.exitCode, 0);
-  EXPECT_EQ(result.out, std::string("TickForge v") + std::string(tickforge::kVersion) + "\n");
+  EXPECT_EQ(result.out, std::string("TickDots v") + std::string(tickdots::kVersion) + "\n");
   EXPECT_TRUE(result.err.empty());
 }
 
@@ -328,7 +328,7 @@ TEST_F(CliFixture, ValidFileProducesExactSummary) {
   const ProcResult result = runOn(path);
   ASSERT_EQ(result.exitCode, 0);
   EXPECT_TRUE(result.err.empty());
-  const std::string expected = std::string("TickForge v") + std::string(tickforge::kVersion) +
+  const std::string expected = std::string("TickDots v") + std::string(tickdots::kVersion) +
                                "\nInput: " + path +
                                "\nInstrument: AAPL\n"
                                "Replay mode: strict\n"
@@ -338,7 +338,7 @@ TEST_F(CliFixture, ValidFileProducesExactSummary) {
                                "Resting orders: 1\n"
                                "Best bid: 100\n"
                                "Best ask: none\n"
-                               "Config hash: 5dddb109ead805bc\n"
+                               "Config hash: 9ebef60ff75d9b97\n"
                                "Replay status: success\n";
   EXPECT_EQ(result.out, expected);
 }
@@ -416,15 +416,15 @@ namespace {
 
 // Serializes events in the parser's CSV format (zero price/quantity on
 // modify/cancel records become empty fields).
-std::string serializeEvents(const std::vector<tickforge::Event>& events) {
+std::string serializeEvents(const std::vector<tickdots::Event>& events) {
   std::ostringstream out;
   out << "timestamp,event_type,order_id,side,price,quantity\n";
   for (const auto& e : events) {
     out << e.timestamp.count() << ','
-        << (e.type == tickforge::EventType::NewOrder      ? 'N'
-            : e.type == tickforge::EventType::ModifyOrder ? 'M'
-                                                          : 'C')
-        << ',' << e.orderId.value() << ',' << (e.side == tickforge::Side::Bid ? 'B' : 'A') << ',';
+        << (e.type == tickdots::EventType::NewOrder      ? 'N'
+            : e.type == tickdots::EventType::ModifyOrder ? 'M'
+                                                         : 'C')
+        << ',' << e.orderId.value() << ',' << (e.side == tickdots::Side::Bid ? 'B' : 'A') << ',';
     if (e.price.ticks() != 0) {
       out << e.price.ticks();
     }
@@ -437,8 +437,8 @@ std::string serializeEvents(const std::vector<tickforge::Event>& events) {
   return out.str();
 }
 
-tickforge::test::GeneratorConfig cliSessionConfig() {
-  tickforge::test::GeneratorConfig config;
+tickdots::test::GeneratorConfig cliSessionConfig() {
+  tickdots::test::GeneratorConfig config;
   config.seed = 1901;
   config.eventCount = 6000;
   config.minPrice = 80;
@@ -485,9 +485,9 @@ TEST_F(CliFixture, FillCountAccumulatesAcrossEvents) {
 }
 
 TEST_F(CliFixture, GeneratedSessionMatchesReferenceSummary) {
-  const auto events = tickforge::test::EventGenerator(cliSessionConfig()).generate();
+  const auto events = tickdots::test::EventGenerator(cliSessionConfig()).generate();
   // Independent expectations from the reference model.
-  tickforge::test::ReferenceBook ref;
+  tickdots::test::ReferenceBook ref;
   std::size_t expectedFills = 0;
   for (const auto& e : events) {
     auto applied = ref.apply(e);
@@ -508,7 +508,7 @@ TEST_F(CliFixture, GeneratedSessionMatchesReferenceSummary) {
   const auto bestAsk = ref.bestAsk();
   EXPECT_EQ(fields.at("Best bid"), bestBid.has_value() ? std::to_string(bestBid->ticks()) : "none");
   EXPECT_EQ(fields.at("Best ask"), bestAsk.has_value() ? std::to_string(bestAsk->ticks()) : "none");
-  EXPECT_EQ(fields.at("Config hash"), "5dddb109ead805bc");
+  EXPECT_EQ(fields.at("Config hash"), "9ebef60ff75d9b97");
   EXPECT_EQ(fields.at("Replay status"), "success");
 
   // Byte-identical on a repeated run with the same path.
@@ -518,7 +518,7 @@ TEST_F(CliFixture, GeneratedSessionMatchesReferenceSummary) {
 }
 
 TEST_F(CliFixture, GeneratedSessionWithTrailingErrorEvent) {
-  const auto events = tickforge::test::EventGenerator(cliSessionConfig()).generate();
+  const auto events = tickdots::test::EventGenerator(cliSessionConfig()).generate();
   std::string csv = serializeEvents(events);
   // Append a cancel of a never-existing order id (replay-level error,
   // well-formed CSV). Timestamp stays strictly increasing.
@@ -546,12 +546,12 @@ namespace {
 // The expected CLI config hash, computed by the library itself from
 // the equivalent SessionConfig (serializeConfig/hashConfig are the
 // contract; the CLI must report the replay result's hash).
-std::string libraryHash(const tickforge::SessionConfig& config) {
-  return std::string(tickforge::formatConfigHash(tickforge::hashConfig(config)));
+std::string libraryHash(const tickdots::SessionConfig& config) {
+  return std::string(tickdots::formatConfigHash(tickdots::hashConfig(config)));
 }
 
-tickforge::SessionConfig baseConfig() {
-  tickforge::SessionConfig config;
+tickdots::SessionConfig baseConfig() {
+  tickdots::SessionConfig config;
   config.instrument = "AAPL";
   return config;
 }
@@ -649,26 +649,26 @@ TEST_F(CliFixture, DefaultsUnchangedByNewOptions) {
   const ProcResult result = runOn(path);
   ASSERT_EQ(result.exitCode, 0);
   EXPECT_EQ(summaryFields(result.out).at("Config hash"), libraryHash(baseConfig()));
-  EXPECT_EQ(libraryHash(baseConfig()), "5dddb109ead805bc");
+  EXPECT_EQ(libraryHash(baseConfig()), "9ebef60ff75d9b97");
 }
 
 // ---------------------------------------------------------------------
 // Committed quick-start example
 // ---------------------------------------------------------------------
 
-#ifndef TICKFORGE_EXAMPLE_CSV
-#error "TICKFORGE_EXAMPLE_CSV must be defined by CMake (path to examples/sample_session.csv)"
+#ifndef TICKDOTS_EXAMPLE_CSV
+#error "TICKDOTS_EXAMPLE_CSV must be defined by CMake (path to examples/sample_session.csv)"
 #endif
 
 TEST(CliExample, CommittedSampleSessionMatchesDocumentedOutput) {
   // The README's worked example, pinned: any change to the fixture,
   // the summary format, or the default configuration breaks this
   // test before it breaks a new user's first run.
-  const ProcResult result = runExe({"--input", TICKFORGE_EXAMPLE_CSV, "--instrument", "AAPL"});
+  const ProcResult result = runExe({"--input", TICKDOTS_EXAMPLE_CSV, "--instrument", "AAPL"});
   ASSERT_EQ(result.exitCode, 0);
   EXPECT_TRUE(result.err.empty());
-  const std::string expected = std::string("TickForge v") + std::string(tickforge::kVersion) +
-                               "\nInput: " + std::string(TICKFORGE_EXAMPLE_CSV) +
+  const std::string expected = std::string("TickDots v") + std::string(tickdots::kVersion) +
+                               "\nInput: " + std::string(TICKDOTS_EXAMPLE_CSV) +
                                "\nInstrument: AAPL\n"
                                "Replay mode: strict\n"
                                "Events processed: 5\n"
@@ -677,7 +677,7 @@ TEST(CliExample, CommittedSampleSessionMatchesDocumentedOutput) {
                                "Resting orders: 1\n"
                                "Best bid: none\n"
                                "Best ask: 105\n"
-                               "Config hash: 5dddb109ead805bc\n"
+                               "Config hash: 9ebef60ff75d9b97\n"
                                "Replay status: success\n";
   EXPECT_EQ(result.out, expected);
 }
@@ -688,10 +688,10 @@ TEST(CliExample, CommittedSampleSessionMatchesDocumentedOutput) {
 
 TEST(CliLatency, EnabledSampleSessionExactOutput) {
   // The section 13.4 example, pinned end to end: the enabled hash
-  // 5212b75c2e1ebc7f was reproduced independently from the canonical
+  // 85dd0af972ed572a was reproduced independently from the canonical
   // serialization, and 1413 is the documented seed-42 first sample.
   const ProcResult result = runExe({"--input",
-                                    TICKFORGE_EXAMPLE_CSV,
+                                    TICKDOTS_EXAMPLE_CSV,
                                     "--instrument",
                                     "AAPL",
                                     "--seed",
@@ -702,8 +702,8 @@ TEST(CliLatency, EnabledSampleSessionExactOutput) {
                                     "1999"});
   ASSERT_EQ(result.exitCode, 0);
   EXPECT_TRUE(result.err.empty());
-  const std::string expected = std::string("TickForge v") + std::string(tickforge::kVersion) +
-                               "\nInput: " + std::string(TICKFORGE_EXAMPLE_CSV) +
+  const std::string expected = std::string("TickDots v") + std::string(tickdots::kVersion) +
+                               "\nInput: " + std::string(TICKDOTS_EXAMPLE_CSV) +
                                "\nInstrument: AAPL\n"
                                "Replay mode: strict\n"
                                "Events processed: 5\n"
@@ -712,7 +712,7 @@ TEST(CliLatency, EnabledSampleSessionExactOutput) {
                                "Resting orders: 1\n"
                                "Best bid: none\n"
                                "Best ask: 105\n"
-                               "Config hash: 5212b75c2e1ebc7f\n"
+                               "Config hash: 85dd0af972ed572a\n"
                                "Replay status: success\n"
                                "Latency model: uniform-latency v1\n"
                                "Latency seed: 42\n"
@@ -724,7 +724,7 @@ TEST(CliLatency, EnabledSampleSessionExactOutput) {
 }
 
 TEST(CliLatency, DisabledByDefaultHasNoLatencySection) {
-  const ProcResult result = runExe({"--input", TICKFORGE_EXAMPLE_CSV, "--instrument", "AAPL"});
+  const ProcResult result = runExe({"--input", TICKDOTS_EXAMPLE_CSV, "--instrument", "AAPL"});
   ASSERT_EQ(result.exitCode, 0);
   EXPECT_EQ(result.out.find("Latency"), std::string::npos);
 }
@@ -880,8 +880,8 @@ TEST_F(CliFixture, LatencyDoesNotChangeMatchingSummary) {
     return lines;
   };
   EXPECT_EQ(matchingLines(disabled.out), matchingLines(enabled.out));
-  EXPECT_NE(disabled.out.find("Config hash: 5dddb109ead805bc"), std::string::npos);
-  EXPECT_EQ(enabled.out.find("Config hash: 5dddb109ead805bc"), std::string::npos);
+  EXPECT_NE(disabled.out.find("Config hash: 9ebef60ff75d9b97"), std::string::npos);
+  EXPECT_EQ(enabled.out.find("Config hash: 9ebef60ff75d9b97"), std::string::npos);
 }
 
 TEST_F(CliFixture, LatencyFailuresPrintNoSummary) {

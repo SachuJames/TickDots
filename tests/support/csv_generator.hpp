@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 struct CsvGeneratorConfig {
   std::uint64_t seed = 0;
@@ -66,4 +66,4 @@ struct MalformedCase {
 // numeric, and boundary errors. Deterministic.
 [[nodiscard]] std::vector<MalformedCase> generateMalformedTable();
 
-} // namespace tickforge::test
+} // namespace tickdots::test

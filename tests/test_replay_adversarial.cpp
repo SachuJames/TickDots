@@ -11,13 +11,13 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstdlib>
 #include <gtest/gtest.h>
@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Wraps MatchingEngine to accumulate fills across all events.
@@ -567,12 +567,12 @@ TEST(ReplayAdversarial, CsvToReplayPipeline) {
   EXPECT_EQ(direct.bestAsk, viaCsv.bestAsk);
 }
 
-// Extended local stress: TICKFORGE_EXTENDED=1 enables 10 seeds x 200
+// Extended local stress: TICKDOTS_EXTENDED=1 enables 10 seeds x 200
 // events with timestamp mutations, verifying determinism and the
 // ordering contract at a larger scale.
 TEST(ReplayAdversarial, ExtendedStress) {
-  if (std::getenv("TICKFORGE_EXTENDED") == nullptr) {
-    GTEST_SKIP() << "Set TICKFORGE_EXTENDED=1 to run the extended stress profile.";
+  if (std::getenv("TICKDOTS_EXTENDED") == nullptr) {
+    GTEST_SKIP() << "Set TICKDOTS_EXTENDED=1 to run the extended stress profile.";
   }
   for (std::uint64_t seed = 1; seed <= 10; ++seed) {
     auto events = validSequence(seed, 200);
@@ -594,4 +594,4 @@ TEST(ReplayAdversarial, ExtendedStress) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

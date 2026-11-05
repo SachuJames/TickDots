@@ -12,18 +12,18 @@
 // inside the representable aggregate range and the gap is documented
 // in ARCHITECTURE.md instead of being assigned invented semantics.
 
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/market_data/market_state.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/market_data/market_state.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 constexpr std::int64_t kMax = std::numeric_limits<std::int64_t>::max();
@@ -299,4 +299,4 @@ TEST(PriceBoundary, PastBoundAggregatesAreDefinedNotUndefined) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

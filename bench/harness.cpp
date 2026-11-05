@@ -13,21 +13,21 @@
 #include <stdexcept>
 #include <utility>
 
-// Build metadata injected by CMake (see the tickforge_bench_lib
+// Build metadata injected by CMake (see the tickdots_bench_lib
 // target). Fallbacks keep the harness buildable without them.
-#ifndef TICKFORGE_BENCH_COMMIT
-#define TICKFORGE_BENCH_COMMIT "unknown"
+#ifndef TICKDOTS_BENCH_COMMIT
+#define TICKDOTS_BENCH_COMMIT "unknown"
 #endif
-#ifndef TICKFORGE_BENCH_COMPILER
-#define TICKFORGE_BENCH_COMPILER "unknown"
+#ifndef TICKDOTS_BENCH_COMPILER
+#define TICKDOTS_BENCH_COMPILER "unknown"
 #endif
-#ifndef TICKFORGE_BENCH_BUILD_TYPE
-#define TICKFORGE_BENCH_BUILD_TYPE "unknown"
+#ifndef TICKDOTS_BENCH_BUILD_TYPE
+#define TICKDOTS_BENCH_BUILD_TYPE "unknown"
 #endif
 
-#include "tickforge/version.hpp"
+#include "tickdots/version.hpp"
 
-namespace tickforge::bench {
+namespace tickdots::bench {
 
 Stats computeStats(std::vector<double> durationsNs) {
   if (durationsNs.empty()) {
@@ -100,16 +100,16 @@ BenchResult runBenchmark(const std::string& name,
 Metadata benchmarkMetadata() {
   Metadata metadata;
   metadata.version = std::string(kVersion);
-  metadata.commit = TICKFORGE_BENCH_COMMIT;
-  metadata.compiler = TICKFORGE_BENCH_COMPILER;
-  metadata.buildType = TICKFORGE_BENCH_BUILD_TYPE;
+  metadata.commit = TICKDOTS_BENCH_COMMIT;
+  metadata.compiler = TICKDOTS_BENCH_COMPILER;
+  metadata.buildType = TICKDOTS_BENCH_BUILD_TYPE;
   return metadata;
 }
 
 void printBenchUsage(std::ostream& out) {
-  out << "Usage: tickforge_bench [--workload NAME] [--size N] [--seed S]\n"
+  out << "Usage: tickdots_bench [--workload NAME] [--size N] [--seed S]\n"
          "                       [--warmups W] [--repetitions R] [--format text|csv]\n"
-         "       tickforge_bench --help\n"
+         "       tickdots_bench --help\n"
          "\n"
          "Workloads: all, add-heavy, cancel-heavy, modify-heavy, match-heavy,\n"
          "           mixed, parse-only, parse-replay, latency-overhead\n"
@@ -241,7 +241,7 @@ std::optional<BenchOptions> parseBenchArgs(const std::vector<std::string>& args)
 }
 
 void printMetadata(std::ostream& out, const Metadata& metadata) {
-  out << "TickForge benchmarks v" << metadata.version << "\n";
+  out << "TickDots benchmarks v" << metadata.version << "\n";
   out << "Commit: " << metadata.commit << "\n";
   out << "Compiler: " << metadata.compiler << "\n";
   out << "Build type: " << metadata.buildType << "\n";
@@ -314,4 +314,4 @@ std::string csvRow(const BenchResult& result, const Metadata& metadata) {
   return row;
 }
 
-} // namespace tickforge::bench
+} // namespace tickdots::bench

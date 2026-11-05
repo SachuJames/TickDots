@@ -8,11 +8,11 @@
 // abort intentionally leaves already-applied events in place: abort means
 // abort, not rollback.
 
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 std::string_view toString(ReplayError error) noexcept {
   switch (error) {
@@ -134,4 +134,4 @@ ReplayResult replayEvents(std::span<const Event> events,
   return result;
 }
 
-} // namespace tickforge
+} // namespace tickdots

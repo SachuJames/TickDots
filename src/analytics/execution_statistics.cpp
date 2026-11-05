@@ -4,9 +4,9 @@
 // weighted average is stored as a rational, never rounded to floating
 // point.
 
-#include "tickforge/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 void ExecutionStatistics::addFill(const Fill& fill) {
   ++fillCount_;
@@ -105,4 +105,4 @@ ExecutionStatistics::averagePrice() const noexcept {
       priceQuantitySumHi_, priceQuantitySumLo_, static_cast<std::int64_t>(totalLots_)};
 }
 
-} // namespace tickforge
+} // namespace tickdots

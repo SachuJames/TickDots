@@ -4,8 +4,8 @@
 // cancellation, modification (SPEC.md 5.5), best bid/ask, and the core
 // structural invariants.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -16,16 +16,16 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::RestingOrder;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::RestingOrder;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event newOrderEvent(Sequence seq, OrderId id, Side side, Price price, Quantity quantity) {
   Event event;

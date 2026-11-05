@@ -5,10 +5,10 @@
 // recorded in the result. Stream-level invariants (ordering, instrument
 // scoping) still abort in lenient mode.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/event_processor.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/event_processor.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -18,18 +18,18 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventProcessor;
-using tickforge::EventType;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::ReplayError;
-using tickforge::ReplayMode;
-using tickforge::ReplayResult;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventProcessor;
+using tickdots::EventType;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::ReplayError;
+using tickdots::ReplayMode;
+using tickdots::ReplayResult;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event makeEvent(Timestamp timestamp, Sequence seq, EventType type, OrderId id) {
   Event event;
@@ -76,7 +76,7 @@ TEST(ReplayLenientTest, AllValidEventsNoSkips) {
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{1}),
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{2}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.error, ReplayError::Ok);
@@ -95,7 +95,7 @@ TEST(ReplayLenientTest, SkipsInvalidValidationEvent) {
       bad,
       makeEvent(Timestamp{300}, Sequence{2}, EventType::NewOrder, OrderId{3}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.skippedCount, 1U);
@@ -113,7 +113,7 @@ TEST(ReplayLenientTest, SkipsDispatchRejection) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::CancelOrder, OrderId{1}),
       makeEvent(Timestamp{300}, Sequence{2}, EventType::NewOrder, OrderId{2}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.skippedCount, 1U);
@@ -132,7 +132,7 @@ TEST(ReplayLenientTest, CountsMultipleSkips) {
       bad2,
       makeEvent(Timestamp{400}, Sequence{3}, EventType::NewOrder, OrderId{4}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.skippedCount, 2U);
@@ -144,7 +144,7 @@ TEST(ReplayLenientTest, AllInvalidStillOk) {
   Event bad = makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{1});
   bad.quantity = Quantity{0};
   const std::vector<Event> events = {bad};
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.skippedCount, 1U);
@@ -157,7 +157,7 @@ TEST(ReplayLenientTest, UnsortedInputStillAborts) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{1}),
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{2}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, ReplayError::UnsortedInput);
@@ -172,7 +172,7 @@ TEST(ReplayLenientTest, InstrumentMismatchStillAborts) {
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{1}),
       other,
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+  const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
 
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, ReplayError::InstrumentMismatch);
@@ -187,7 +187,7 @@ TEST(ReplayLenientTest, StrictModeUnchangedByDefault) {
       bad,
   };
   // No mode argument: strict is the default.
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
 
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, ReplayError::InvalidEvent);
@@ -206,7 +206,7 @@ TEST(ReplayLenientTest, DeterministicAcrossRuns) {
         bad,
         makeEvent(Timestamp{300}, Sequence{2}, EventType::NewOrder, OrderId{3}),
     };
-    const ReplayResult result = tickforge::replayEvents(events, processor, ReplayMode::Lenient);
+    const ReplayResult result = tickdots::replayEvents(events, processor, ReplayMode::Lenient);
     return std::make_pair(result.skippedCount, processor.seen);
   };
 
@@ -217,8 +217,8 @@ TEST(ReplayLenientTest, DeterministicAcrossRuns) {
 }
 
 TEST(ReplayLenientTest, ModeToString) {
-  EXPECT_EQ(tickforge::toString(ReplayMode::Strict), "Strict");
-  EXPECT_EQ(tickforge::toString(ReplayMode::Lenient), "Lenient");
+  EXPECT_EQ(tickdots::toString(ReplayMode::Strict), "Strict");
+  EXPECT_EQ(tickdots::toString(ReplayMode::Lenient), "Lenient");
 }
 
 TEST(ReplayLenientTest, IntegrationWithOrderBook) {
@@ -230,15 +230,15 @@ TEST(ReplayLenientTest, IntegrationWithOrderBook) {
       makeEvent(Timestamp{300}, Sequence{2}, EventType::NewOrder, OrderId{2}),
   };
 
-  tickforge::OrderBook strict_book;
-  const ReplayResult strictResult = tickforge::replayEvents(events, strict_book);
+  tickdots::OrderBook strict_book;
+  const ReplayResult strictResult = tickdots::replayEvents(events, strict_book);
   EXPECT_FALSE(strictResult.ok());
   EXPECT_EQ(strictResult.error, ReplayError::DuplicateOrder);
   EXPECT_EQ(strict_book.orderCount(), 1U);
 
-  tickforge::OrderBook lenient_book;
+  tickdots::OrderBook lenient_book;
   const ReplayResult lenientResult =
-      tickforge::replayEvents(events, lenient_book, ReplayMode::Lenient);
+      tickdots::replayEvents(events, lenient_book, ReplayMode::Lenient);
   EXPECT_TRUE(lenientResult.ok());
   EXPECT_EQ(lenientResult.skippedCount, 1U);
   EXPECT_EQ(lenientResult.mode, ReplayMode::Lenient);

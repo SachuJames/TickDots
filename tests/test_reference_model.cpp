@@ -6,11 +6,11 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <gtest/gtest.h>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
@@ -214,4 +214,4 @@ TEST(EventGenerator, SeedsDiverge) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

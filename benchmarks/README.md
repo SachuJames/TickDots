@@ -1,6 +1,6 @@
 # Benchmarks
 
-The TickForge benchmark harness does not exist yet. It arrives with the benchmark milestone (see roadmap in README.md).
+The TickDots benchmark harness does not exist yet. It arrives with the benchmark milestone (see roadmap in README.md).
 
 When it lands, this directory will hold:
 

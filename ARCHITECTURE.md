@@ -1,4 +1,4 @@
-# TickForge System Architecture
+# TickDots System Architecture
 
 **Status:** Current as of v0.2.0, including the per-fill latency model covered in sections 26 and 27.
 **Companion document:** `SPEC.md` (domain semantics). This document covers
@@ -132,8 +132,8 @@ scheduling).
 
 ## 3. Public API (planned)
 
-The public surface lives in `include/tickforge/` under namespace
-`tickforge`. Day 01 ships only `version.hpp`; the following is the
+The public surface lives in `include/tickdots/` under namespace
+`tickdots`. Day 01 ships only `version.hpp`; the following is the
 intended shape, not implemented code:
 
 * `Event`, `OrderId`, `Price`, `Quantity`, `Side`, `TimestampNs`: strong
@@ -148,7 +148,7 @@ intended shape, not implemented code:
 * `MatchingRule`: interface with a single default implementation
   (`PriceTimePriority`).
 
-API stability rule: anything under `include/tickforge/` is public and
+API stability rule: anything under `include/tickdots/` is public and
 requires a minor version bump to change incompatibly before 1.0.
 
 ---
@@ -194,8 +194,8 @@ checkpoint: everything downstream of it is pure function of
 ## 6. Repository map (Day 01)
 
 ```text
-tickforge/
-  include/tickforge/      public headers (version.hpp.in template today)
+tickdots/
+  include/tickdots/      public headers (version.hpp.in template today)
   src/                    implementation units (main.cpp today)
   tests/                  unit tests (GoogleTest)
   benchmarks/             benchmark harness (arrives with the benchmark milestone)
@@ -215,11 +215,11 @@ extension-point interfaces.
 
 The canonical normalized event model lives in:
 
-* `include/tickforge/event/` — public domain types: `Timestamp`,
+* `include/tickdots/event/` — public domain types: `Timestamp`,
   `Sequence`, `OrderId`, `Price`, `Quantity`, `Side`, `EventType`,
   `EventKey`, `Event`, and `validateEvent()`.
 * `src/event/` — non-trivial function definitions (enum stringification,
-  event validation), compiled into the `tickforge_event` static library.
+  event validation), compiled into the `tickdots_event` static library.
 
 Design notes:
 
@@ -259,9 +259,9 @@ Market State   (best bid/ask, price levels, per-order state)
 
 ### 8.1 Replay driver
 
-Lives in `include/tickforge/replay/` (`event_processor.hpp`,
+Lives in `include/tickdots/replay/` (`event_processor.hpp`,
 `replay.hpp`) and `src/replay/replay.cpp`, compiled into the
-`tickforge_replay` static library.
+`tickdots_replay` static library.
 
 Responsibilities, in order, per event:
 
@@ -316,8 +316,8 @@ replay driver.
 
 ### 8.3 Order book
 
-Lives in `include/tickforge/book/order_book.hpp` and
-`src/book/order_book.cpp`, compiled into the `tickforge_book` static
+Lives in `include/tickdots/book/order_book.hpp` and
+`src/book/order_book.cpp`, compiled into the `tickdots_book` static
 library. Implements `EventProcessor`. Performs no matching.
 
 Representation (all internals private):
@@ -397,8 +397,8 @@ Updated Market State
 * **Replay engine:** unchanged from Day 03. Event ordering, validation,
   dispatch. It dispatches to any `EventProcessor`; it does not know
   whether the processor matches.
-* **MatchingEngine** (`include/tickforge/matching/`, `src/matching/`,
-  `tickforge_matching` library): implements `EventProcessor`. Decides
+* **MatchingEngine** (`include/tickdots/matching/`, `src/matching/`,
+  `tickdots_matching` library): implements `EventProcessor`. Decides
   crossing, selects resting orders by price-time priority, generates
   fills, rests residuals. It drives the `OrderBook` exclusively through
   the book's public mutation API (`addRestingOrder`, `removeOrder`,
@@ -434,7 +434,7 @@ Derived from SPEC.md sections 1.1, 2.3, 5.4, 5.5, 6, and 7:
 
 ### 9.3 Fill records
 
-`Fill` (`include/tickforge/matching/fill.hpp`) is an execution result,
+`Fill` (`include/tickdots/matching/fill.hpp`) is an execution result,
 not a normalized event (SPEC.md 2.3: trade events do not appear in the
 order flow). Fields: aggressor id, resting id, aggressor side,
 execution price (ticks), quantity (lots, always positive), timestamp
@@ -481,7 +481,7 @@ QueueTracker   (designated-order positions, read-only book queries)
 
 ### 10.1 Responsibility split
 
-* **QueueTracker** (`include/tickforge/analytics/queue_tracker.hpp`,
+* **QueueTracker** (`include/tickdots/analytics/queue_tracker.hpp`,
   `src/analytics/queue_tracker.cpp`): tracks queue positions for
   *designated* order ids. A designated order is one the caller
   explicitly registers via `designate()`; tracking is opt-in so the
@@ -491,11 +491,11 @@ QueueTracker   (designated-order positions, read-only book queries)
   through the public read API (`find`, `ordersAtLevel`, `contains`).
   It never writes to the book and never performs matching.
 * **ExecutionStatistics**
-  (`include/tickforge/analytics/execution_statistics.hpp`,
+  (`include/tickdots/analytics/execution_statistics.hpp`,
   `src/analytics/execution_statistics.cpp`): consumes `Fill` records
   via `addFill()`/`addFills()` and maintains aggregate execution
   metrics. Pure observer; knows nothing about the book or the engine.
-* Both live in the `tickforge_analytics` library. The intended driver
+* Both live in the `tickdots_analytics` library. The intended driver
   flow per event is: `engine.onEvent(e)` then
   `tracker.onEvent(e)`, `tracker.onFills(engine.fills())`,
   `stats.addFills(engine.fills())`.
@@ -573,7 +573,7 @@ Replay -> MatchingEngine -> OrderBook -> Fills -> Analytics
 
 ### 11.1 Supported format
 
-One format only: TickForge CSV. Header required, byte-exact:
+One format only: TickDots CSV. Header required, byte-exact:
 
 ```text
 timestamp,event_type,order_id,side,price,quantity
@@ -638,11 +638,11 @@ collect reasons themselves. Parsers never silently drop records
 
 ### 11.5 Component
 
-`tickforge_market_data` static library: `CsvParser` with
+`tickdots_market_data` static library: `CsvParser` with
 `parseRecord()` (one line + caller-supplied sequence) and
 `parseStream()` (header validation, dense seq from 0), plus the
 `MarketStateView` derived state view (Day 07). Depends on
-`tickforge_core`, `tickforge_event`, and `tickforge_book` (for the
+`tickdots_core`, `tickdots_event`, and `tickdots_book` (for the
 view only; the parser itself never touches the book). No coupling to
 matching or analytics; the caller composes the pipeline.
 
@@ -710,12 +710,12 @@ priority.
 ## 13. Session configuration (Day 09)
 
 Day 09 implements SPEC.md section 10 (session configuration) and the
-SPEC.md 9.6 requirement that results embed the TickForge version and
+SPEC.md 9.6 requirement that results embed the TickDots version and
 the configuration hash.
 
 ### 13.1 Contract
 
-`SessionConfig` (`include/tickforge/replay/session_config.hpp`) is a
+`SessionConfig` (`include/tickdots/replay/session_config.hpp`) is a
 plain value type describing one simulation run. Fields and their
 specification provenance:
 
@@ -729,10 +729,10 @@ specification provenance:
   6 requires so future rules are explicit. Only price-time priority
   exists today.
 * `prngSeed` (optional): present only when a model needs randomness
-  (SPEC.md 4.3). TickForge has no stochastic models.
+  (SPEC.md 4.3). TickDots has no stochastic models.
 * `mode` (default `Strict`): the SPEC.md 11 error mode.
 
-Microstructure model parameters are intentionally absent: TickForge
+Microstructure model parameters are intentionally absent: TickDots
 implements no microstructure models, so there is no schema to
 configure. They join the contract when such a model does.
 
@@ -744,12 +744,12 @@ equivalent user inputs hash identically.
 
 ### 13.2 Serialization
 
-SPEC.md 10 requires serializability but names no format. TickForge
+SPEC.md 10 requires serializability but names no format. TickDots
 uses a minimal canonical text format (this is the file format;
 writing the string to a file is the serialization):
 
 ```text
-tickforge-config/1
+tickdots-config/1
 instrument=AAPL
 lot-size=1
 matching-rule=price-time-priority
@@ -783,7 +783,7 @@ existing overloads are unchanged. It validates the configuration
 first (invalid config yields `ReplayError::InvalidConfig` and the
 processor observes nothing), checks the config's instrument against
 the stream, replays with `config.mode`, and attaches metadata:
-`ReplayResult::version` (always `tickforge::kVersion`) and
+`ReplayResult::version` (always `tickdots::kVersion`) and
 `ReplayResult::configHash` (the FNV-1a hash). `configHash` is
 `std::nullopt` for replays run without a configuration. Metadata
 does not alter matching: configured and plain replays produce
@@ -804,7 +804,7 @@ It does not identify the event stream, the source dataset, or the
 build. SPEC.md 9.3 defines the normalized event stream as the
 reproducibility boundary ("two parsers producing the same normalized
 stream MUST produce the same simulation") but requires no stream
-identifier; SPEC.md 9.6 requires outputs to embed only the TickForge
+identifier; SPEC.md 9.6 requires outputs to embed only the TickDots
 version and the configuration hash. A stream-identity hash is therefore
 a potential future enhancement, not a current requirement, and was
 deliberately not added.
@@ -850,7 +850,7 @@ C++20/GoogleTest/CMake setup proved sufficient.
 
 Regular CI runs a small deterministic seed set (6 seeds x 100 events
 for matching/analytics, fewer for replay). An extended local profile
-(20 seeds x 500 events) runs only when `TICKFORGE_EXTENDED=1` is set;
+(20 seeds x 500 events) runs only when `TICKDOTS_EXTENDED=1` is set;
 it is skipped otherwise so ordinary CI stays fast. No timing-based
 pass/fail thresholds exist anywhere.
 
@@ -996,7 +996,7 @@ one deliberate change at a time to a valid sequence.
 * State integrity: quantity conservation over generated sequences;
   reference-model differential (fills, resting counts, best bid/ask);
   mutated-sequence determinism; CSV-to-replay pipeline equivalence.
-* Extended profile (`TICKFORGE_EXTENDED=1`): 10 seeds x 200 events with
+* Extended profile (`TICKDOTS_EXTENDED=1`): 10 seeds x 200 events with
   timestamp mutations.
 
 ### 16.4 Findings
@@ -1055,7 +1055,7 @@ in order) plus resting-order counts and best bid/ask.
   (fill count, quantities, min/max price, exact 128-bit VWAP) verified
   against collected fills.
 * Determinism: repeated runs identical; extended profile
-  (`TICKFORGE_EXTENDED=1`) with 10 seeds x 150 events.
+  (`TICKDOTS_EXTENDED=1`) with 10 seeds x 150 events.
 
 ### 17.4 Findings
 
@@ -1083,7 +1083,7 @@ Validation does not mutate its argument.
 
 Format (byte-exact):
 ```
-tickforge-config/1\n
+tickdots-config/1\n
 instrument=<value>\n
 [lot-size=<value>\n]
 matching-rule=price-time-priority\n
@@ -1213,9 +1213,9 @@ Fragmented delivery of large lines matches ordinary delivery.
 
 SPEC.md defines no command-line interface: no arguments, flags, file
 input, or exit-code contract appears anywhere in the specification.
-The `tickforge` executable is still the Day 01 entry point (the
+The `tickdots` executable is still the Day 01 entry point (the
 CMakeLists comment says so: "proves the build works, nothing more").
-It prints `TickForge v<version>` and `Engine initialized
+It prints `TickDots v<version>` and `Engine initialized
 successfully.`, exits 0, and ignores argv entirely. It opens no
 files, parses no CSV, and runs no replay.
 
@@ -1440,7 +1440,7 @@ were not modified.
 
 ## 25. Production stochastic model: design investigation (Day 23)
 
-Question: should TickForge now gain its first production consumer
+Question: should TickDots now gain its first production consumer
 of SessionConfig.prngSeed?
 
 Evidence found:
@@ -1511,7 +1511,7 @@ contract states plainly in SPEC section 15.
 Shape of the implementation:
 
 * SplitMix64 moved into the core library
-  (include/tickforge/core/splitmix64.hpp) as the single
+  (include/tickdots/core/splitmix64.hpp) as the single
   implementation. The test DeterministicRng is now an alias for
   it, so generation version 1 (SPEC section 14) runs on the same
   code it always did; the Day 22 known answers pin both names.
@@ -1521,7 +1521,7 @@ Shape of the implementation:
   a seed. Canonical keys latency-max-ns/latency-min-ns sit in byte
   order after instrument; disabled configurations serialize and
   hash exactly as before.
-* LatencyModel (tickforge_model) owns a SplitMix64 seeded from
+* LatencyModel (tickdots_model) owns a SplitMix64 seeded from
   the configuration and consumes one draw per observed fill:
   sample = min + nextBounded(max - min + 1), computed with an
   unsigned span so the widest interval [0, INT64_MAX] is exact.
@@ -1567,15 +1567,15 @@ partial artifact is never presented as a result.
 
 Config identity needed no changes: the enabled hash was already
 determined by Day 24's serialization. For the documented example
-(seed 42, bounds 1000 to 1999) it is 5212b75c2e1ebc7f, reproduced
+(seed 42, bounds 1000 to 1999) it is 85dd0af972ed572a, reproduced
 independently from the canonical text with a separate FNV-1a
 implementation and pinned by an exact-output process test.
 
 ## 28. Benchmark infrastructure (Day 26)
 
-A dedicated benchmark executable, tickforge_bench, measures the
+A dedicated benchmark executable, tickdots_bench, measures the
 production components without touching them. Layout: bench/
-holds a small static library (tickforge_bench_lib) with the
+holds a small static library (tickdots_bench_lib) with the
 measurement harness and the workload definitions, plus a thin
 main. It links the production libraries and, for the mixed
 workload, the generation-version-1 event generator from test
@@ -1621,7 +1621,7 @@ through the LatencyObserver, comparable against mixed).
 
 Output is a text report by default and CSV with --format csv
 (one row per benchmark, stable field order, quoted where needed).
-Each run records the TickForge version, the commit the build was
+Each run records the TickDots version, the commit the build was
 configured from, the compiler, and the build type. Timing is an
 observed quantity: it varies with the machine and its load, and
 results from different environments are not directly comparable.

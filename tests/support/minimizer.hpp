@@ -15,13 +15,13 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstddef>
 #include <functional>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 // Renumbers seqs densely (0, 1, 2, ...) and makes timestamps strictly
 // increasing, preserving event order. Used after removing events so
@@ -34,4 +34,4 @@ namespace tickforge::test {
 minimizeFailingSequence(const std::vector<Event>& events,
                         const std::function<bool(const std::vector<Event>&)>& stillFails);
 
-} // namespace tickforge::test
+} // namespace tickdots::test

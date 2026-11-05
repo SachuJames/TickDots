@@ -2,7 +2,7 @@
 //
 // Derived market-state view (SPEC.md 9.5, SPEC.md section 5).
 //
-// Market State in the TickForge pipeline is "the MBO book plus derived
+// Market State in the TickDots pipeline is "the MBO book plus derived
 // views (best bid/ask, level aggregates) after each event." Aggregated
 // (level-2/MBP) views are derived, never primary: they are computed from
 // the order-by-order book and must never be mistaken for order identity.
@@ -21,13 +21,13 @@
 
 #pragma once
 
-#include "tickforge/book/order_book.hpp"
+#include "tickdots/book/order_book.hpp"
 
 #include <cstddef>
 #include <optional>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 // Aggregate state of one price level, derived from resting orders.
 // totalQuantity is the sum of remaining lots at the level; orderCount is
@@ -64,4 +64,4 @@ private:
   const OrderBook& book_;
 };
 
-} // namespace tickforge
+} // namespace tickdots

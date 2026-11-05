@@ -14,10 +14,10 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
 
 #include <cstdlib>
 #include <gtest/gtest.h>
@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Compares two fills field by field. Returns an empty string on match.
@@ -170,11 +170,11 @@ TEST(MatchingProperty, DifferentialAgainstReferenceModel) {
   }
 }
 
-// Extended local stress: TICKFORGE_EXTENDED=1 enables 20 seeds x 500
+// Extended local stress: TICKDOTS_EXTENDED=1 enables 20 seeds x 500
 // events. Not run in ordinary CI.
 TEST(MatchingProperty, ExtendedStress) {
-  if (std::getenv("TICKFORGE_EXTENDED") == nullptr) {
-    GTEST_SKIP() << "Set TICKFORGE_EXTENDED=1 to run the extended stress profile.";
+  if (std::getenv("TICKDOTS_EXTENDED") == nullptr) {
+    GTEST_SKIP() << "Set TICKDOTS_EXTENDED=1 to run the extended stress profile.";
   }
   for (std::uint64_t seed = 1000; seed < 1020; ++seed) {
     GeneratorConfig config;
@@ -186,4 +186,4 @@ TEST(MatchingProperty, ExtendedStress) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

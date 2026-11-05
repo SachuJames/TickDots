@@ -1,4 +1,4 @@
-# TickForge code style: modern C++, LLVM base.
+# TickDots code style: modern C++, LLVM base.
 # Check with: clang-format --dry-run --Werror <files>
 
 BasedOnStyle: LLVM

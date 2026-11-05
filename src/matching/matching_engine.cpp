@@ -1,15 +1,15 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
 // Matching engine implementation. See
-// include/tickforge/matching/matching_engine.hpp for the semantics.
+// include/tickdots/matching/matching_engine.hpp for the semantics.
 
-#include "tickforge/matching/matching_engine.hpp"
+#include "tickdots/matching/matching_engine.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <optional>
 
-namespace tickforge {
+namespace tickdots {
 
 MatchingEngine::MatchingEngine(OrderBook& book) : book_(book) {}
 
@@ -127,4 +127,4 @@ bool MatchingEngine::crosses(Side aggressorSide, Price limitPrice, Price resting
   return limitPrice.ticks() <= restingPrice.ticks();
 }
 
-} // namespace tickforge
+} // namespace tickdots

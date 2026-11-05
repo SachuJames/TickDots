@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// MBO order book implementation. See include/tickforge/book/order_book.hpp
+// MBO order book implementation. See include/tickdots/book/order_book.hpp
 // for the representation and scope notes.
 
-#include "tickforge/book/order_book.hpp"
+#include "tickdots/book/order_book.hpp"
 
 #include <cassert>
 #include <iterator>
 
-namespace tickforge {
+namespace tickdots {
 
 bool OrderBook::onEvent(const Event& event) {
   switch (event.type) {
@@ -203,4 +203,4 @@ bool OrderBook::applyModify(const Event& event) {
   return true;
 }
 
-} // namespace tickforge
+} // namespace tickdots

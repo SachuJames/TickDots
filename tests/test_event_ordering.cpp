@@ -5,7 +5,7 @@
 // on this ordering being a strict weak ordering with stable,
 // repeatable sorts.
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -15,14 +15,14 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event makeEvent(Timestamp timestamp, Sequence sequence) {
   Event event;

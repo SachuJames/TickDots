@@ -37,7 +37,7 @@ First release.
 - Session configuration (instrument, tick size, lot size, matching rule,
   replay mode, optional PRNG seed) with canonical serialization and a
   deterministic configuration hash reported by every replay.
-- CLI: `tickforge --input PATH --instrument SYMBOL` with `--mode`,
+- CLI: `tickdots --input PATH --instrument SYMBOL` with `--mode`,
   `--tick-size`, `--lot-size`, and `--seed` options, a fixed 12-line
   summary on success, diagnostics on stderr, and documented exit codes.
 - The behavior contract is specified in SPEC.md, with design notes and

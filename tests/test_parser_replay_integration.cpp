@@ -9,15 +9,15 @@
 //   - Failed parses do not contaminate subsequent parses
 
 #include "tests/support/csv_generator.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <gtest/gtest.h>
 #include <sstream>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // A valid CSV stream with orders that will match.
@@ -185,4 +185,4 @@ TEST(ParserReplay, SequencesRestartPerStream) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

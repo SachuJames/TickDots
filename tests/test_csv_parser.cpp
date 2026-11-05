@@ -3,8 +3,8 @@
 // CsvParser unit tests: valid records, syntax errors, numeric errors,
 // semantic rejection via validateEvent, and determinism.
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -13,13 +13,13 @@
 
 namespace {
 
-using tickforge::CsvParser;
-using tickforge::EventType;
-using tickforge::ParseError;
-using tickforge::ParseResult;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::StreamResult;
+using tickdots::CsvParser;
+using tickdots::EventType;
+using tickdots::ParseError;
+using tickdots::ParseResult;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::StreamResult;
 
 CsvParser makeParser() {
   return CsvParser{"AAPL"};

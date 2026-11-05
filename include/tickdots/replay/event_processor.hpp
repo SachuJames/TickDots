@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 class EventProcessor {
 public:
@@ -31,4 +31,4 @@ public:
   virtual bool onEvent(const Event& event) = 0;
 };
 
-} // namespace tickforge
+} // namespace tickdots

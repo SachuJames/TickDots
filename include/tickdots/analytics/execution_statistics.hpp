@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
 
 #include <cstddef>
 #include <cstdint>
 #include <optional>
 #include <span>
 
-namespace tickforge {
+namespace tickdots {
 
 class ExecutionStatistics {
 public:
@@ -74,4 +74,4 @@ private:
   void addPriceQuantity(Price price, Quantity quantity);
 };
 
-} // namespace tickforge
+} // namespace tickdots

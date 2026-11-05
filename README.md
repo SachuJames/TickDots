@@ -1,12 +1,12 @@
 <div align="center">
 
-# TickForge
+# TickDots
 
 **Deterministic market-event replay and matching engine in C++20.**
 
-<img src="docs/images/hero.webp" alt="TickForge" width="100%"/>
+<img src="docs/images/hero.webp" alt="TickDots" width="100%"/>
 
-[![CI](https://github.com/SachuJames/tickforge/actions/workflows/ci.yml/badge.svg)](https://github.com/SachuJames/tickforge/actions/workflows/ci.yml)
+[![CI](https://github.com/SachuJames/tickdots/actions/workflows/ci.yml/badge.svg)](https://github.com/SachuJames/tickdots/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 ![C++20](https://img.shields.io/badge/C++-20-blue.svg)
 ![CMake](https://img.shields.io/badge/CMake-3.22+-064F8C.svg)
@@ -15,7 +15,7 @@
 
 </div>
 
-TickForge replays a stream of order events (new, modify, cancel) through a
+TickDots replays a stream of order events (new, modify, cancel) through a
 market-by-order book with price-time priority matching. The same input always
 produces the same fills, the same final book, and the same statistics, on any
 machine: prices and quantities are integers (ticks and lots), event ordering
@@ -74,13 +74,13 @@ first configure, so the first configure needs network access. The library
 and the CLI have no third-party dependencies.
 
 ```bash
-git clone https://github.com/SachuJames/tickforge.git
-cd tickforge
+git clone https://github.com/SachuJames/tickdots.git
+cd tickdots
 cmake --preset default
 cmake --build --preset default -j4
 ```
 
-This produces `build/tickforge` (the CLI) and `build/tickforge_tests`.
+This produces `build/tickdots` (the CLI) and `build/tickdots_tests`.
 
 Other presets: `release` (optimized build in `build-release/`) and `asan`
 (Debug with AddressSanitizer and UndefinedBehaviorSanitizer in
@@ -102,13 +102,13 @@ bid crosses the ask for a partial fill, the ask is reduced, and the first
 bid is cancelled.
 
 ```bash
-./build/tickforge --input examples/sample_session.csv --instrument AAPL
+./build/tickdots --input examples/sample_session.csv --instrument AAPL
 ```
 
 Output:
 
 ```text
-TickForge v0.2.0
+TickDots v0.2.0
 Input: examples/sample_session.csv
 Instrument: AAPL
 Replay mode: strict
@@ -118,7 +118,7 @@ Fills: 1
 Resting orders: 1
 Best bid: none
 Best ask: 105
-Config hash: 5dddb109ead805bc
+Config hash: 9ebef60ff75d9b97
 Replay status: success
 ```
 
@@ -130,11 +130,11 @@ summary.
 ## CLI reference
 
 ```text
-tickforge --input PATH --instrument SYMBOL [--mode strict|lenient]
+tickdots --input PATH --instrument SYMBOL [--mode strict|lenient]
                    [--tick-size VALUE] [--lot-size VALUE] [--seed VALUE]
                    [--latency-min-ns VALUE] [--latency-max-ns VALUE]
-tickforge --help
-tickforge --version
+tickdots --help
+tickdots --version
 ```
 
 | Option | Required | Value |
@@ -158,7 +158,7 @@ simulated latency sample per fill from the seeded model and prints
 them after the summary:
 
 ```console
-$ ./build/tickforge --input examples/sample_session.csv --instrument AAPL --seed 42 --latency-min-ns 1000 --latency-max-ns 1999
+$ ./build/tickdots --input examples/sample_session.csv --instrument AAPL --seed 42 --latency-min-ns 1000 --latency-max-ns 1999
 ...
 Latency model: uniform-latency v1
 Latency seed: 42
@@ -187,7 +187,7 @@ Exit codes:
 ## Performance benchmarks
 
 The benchmark suite lives in `bench/` and builds as
-`tickforge_bench`. It measures deterministic workloads (insertion,
+`tickdots_bench`. It measures deterministic workloads (insertion,
 cancellation, modification, matching, a mixed generated session,
 the parse and replay pipeline, and latency-observer overhead)
 with warm-ups and repeated measurements.
@@ -195,9 +195,9 @@ with warm-ups and repeated measurements.
 ```console
 $ cmake --preset release
 $ cmake --build --preset release
-$ ./build-release/tickforge_bench                 # full suite, text output
-$ ./build-release/tickforge_bench --format csv    # one CSV row per benchmark
-$ ./build-release/tickforge_bench --workload mixed --size 50000 --repetitions 5
+$ ./build-release/tickdots_bench                 # full suite, text output
+$ ./build-release/tickdots_bench --format csv    # one CSV row per benchmark
+$ ./build-release/tickdots_bench --workload mixed --size 50000 --repetitions 5
 ```
 
 Use a Release build for meaningful numbers; a Debug build measures
@@ -258,7 +258,7 @@ domain, is in [SPEC.md](SPEC.md). Design notes are in
 ```bash
 ctest --preset default --output-on-failure
 # a small number of stress tests are gated behind an environment flag:
-TICKFORGE_EXTENDED=1 ./build/tickforge_tests
+TICKDOTS_EXTENDED=1 ./build/tickdots_tests
 ```
 
 The suite covers the event model, book, matching, analytics, CSV parser,
@@ -271,7 +271,7 @@ and the sanitizer build, on every push and pull request.
 ## Layout
 
 ```text
-include/tickforge/   public headers (core, event, book, matching,
+include/tickdots/   public headers (core, event, book, matching,
                      replay, analytics, market_data, model)
 src/                 implementation, plus main.cpp (the CLI)
 tests/               GoogleTest suites and the property-test support code
@@ -292,7 +292,7 @@ BENCHMARKING.md      benchmarking policy: what a performance claim
 ## Version
 
 Current version: 0.2.0 (see the `project()` declaration in
-`CMakeLists.txt`; `tickforge --version` prints the same value). Changes
+`CMakeLists.txt`; `tickdots --version` prints the same value). Changes
 are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## License

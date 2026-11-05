@@ -3,7 +3,7 @@
 // Session configuration implementation: validation, canonical
 // serialization, deserialization, and deterministic hashing.
 
-#include "tickforge/replay/session_config.hpp"
+#include "tickdots/replay/session_config.hpp"
 
 #include <algorithm>
 #include <array>
@@ -11,7 +11,7 @@
 #include <string_view>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 std::string_view toString(MatchingRule rule) noexcept {
   switch (rule) {
@@ -136,7 +136,7 @@ std::string serializeConfig(const SessionConfig& config) {
   // latency-min-ns, lot-size, matching-rule, mode, prng-seed,
   // tick-size. Absent optionals are omitted. Assumes a validated
   // config; see validateConfig.
-  std::string out = "tickforge-config/1\n";
+  std::string out = "tickdots-config/1\n";
   out += "instrument=" + config.instrument + "\n";
   if (config.latencyMaxNs.has_value()) {
     out += "latency-max-ns=" + std::to_string(*config.latencyMaxNs) + "\n";
@@ -332,7 +332,7 @@ ConfigParseResult deserializeConfig(std::string_view text) {
     return result;
   }
 
-  if (lines.empty() || lines[0] != "tickforge-config/1") {
+  if (lines.empty() || lines[0] != "tickdots-config/1") {
     result.error = ConfigParseError::BadSchema;
     return result;
   }
@@ -381,4 +381,4 @@ std::string formatConfigHash(std::uint64_t hash) {
   return out;
 }
 
-} // namespace tickforge
+} // namespace tickdots

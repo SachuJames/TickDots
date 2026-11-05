@@ -3,22 +3,22 @@
 // Tests for the canonical Event: construction, equality, EventKey
 // extraction, and the (timestamp, sequence) ordering from SPEC.md 3.2.
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventKey;
-using tickforge::EventType;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventKey;
+using tickdots::EventType;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event makeNewOrder(Timestamp timestamp, Sequence sequence, OrderId orderId) {
   Event event;
@@ -91,7 +91,7 @@ TEST(EventTest, DifferingFieldsCompareUnequal) {
 
 TEST(EventTest, EventKeyExtraction) {
   const Event event = makeNewOrder(Timestamp{100}, Sequence{4}, OrderId{7});
-  const EventKey key = tickforge::eventKey(event);
+  const EventKey key = tickdots::eventKey(event);
   EXPECT_EQ(key.timestamp, Timestamp{100});
   EXPECT_EQ(key.sequence, Sequence{4});
   const EventKey expected{Timestamp{100}, Sequence{4}};

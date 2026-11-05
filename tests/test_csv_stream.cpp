@@ -14,10 +14,10 @@
 
 #include "tests/support/csv_generator.hpp"
 #include "tests/support/deterministic_rng.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstdlib>
 #include <gtest/gtest.h>
@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Test-only stream buffer: delivers `data` in chunks whose sizes cycle
@@ -515,8 +515,8 @@ TEST(StreamProperty, GeneratedDocsChunkInvariant) {
 }
 
 TEST(StreamProperty, ExtendedStress) {
-  if (std::getenv("TICKFORGE_EXTENDED") == nullptr) {
-    GTEST_SKIP() << "Set TICKFORGE_EXTENDED=1 to run the extended stress profile.";
+  if (std::getenv("TICKDOTS_EXTENDED") == nullptr) {
+    GTEST_SKIP() << "Set TICKDOTS_EXTENDED=1 to run the extended stress profile.";
   }
   for (std::uint64_t seed = 1; seed <= 50; ++seed) {
     CsvGeneratorConfig config;
@@ -534,4 +534,4 @@ TEST(StreamProperty, ExtendedStress) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

@@ -7,20 +7,20 @@
 // 14.2 modulo rule by hand-checkable arithmetic.
 
 #include "tests/support/event_generator.hpp"
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/core/splitmix64.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/model/latency_model.hpp"
-#include "tickforge/model/latency_observer.hpp"
-#include "tickforge/replay/replay.hpp"
-#include "tickforge/replay/session_config.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/core/splitmix64.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/model/latency_model.hpp"
+#include "tickdots/model/latency_observer.hpp"
+#include "tickdots/replay/replay.hpp"
+#include "tickdots/replay/session_config.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 Fill makeFill(std::uint64_t i) {
@@ -170,7 +170,7 @@ TEST(LatencyConfig, EnabledConfigValidatesAndRoundTrips) {
   EXPECT_EQ(validateConfig(config), ConfigError::Ok);
   const std::string text = serializeConfig(config);
   EXPECT_EQ(text,
-            "tickforge-config/1\n"
+            "tickdots-config/1\n"
             "instrument=AAPL\n"
             "latency-max-ns=1999\n"
             "latency-min-ns=1000\n"
@@ -206,7 +206,7 @@ TEST(LatencyConfig, ValidationErrors) {
 }
 
 TEST(LatencyConfig, DeserializeRejectsBadLatencyValues) {
-  const std::string base = "tickforge-config/1\ninstrument=AAPL\n";
+  const std::string base = "tickdots-config/1\ninstrument=AAPL\n";
   EXPECT_EQ(deserializeConfig(base + "latency-max-ns=10\nlatency-min-ns=-3\nmatching-rule="
                                      "price-time-priority\nmode=strict\nprng-seed=1\n")
                 .error,
@@ -369,4 +369,4 @@ TEST(LatencyModel, ObserverThroughConfiguredReplayProducesArtifact) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

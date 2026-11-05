@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/event_processor.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/event_processor.hpp"
 
 #include <cstddef>
 #include <functional>
@@ -41,7 +41,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 // Public, read-only view of a resting order.
 struct RestingOrder {
@@ -113,4 +113,4 @@ private:
   void removeFromLevel(LevelMap& levels, Entry& entry);
 };
 
-} // namespace tickforge
+} // namespace tickdots

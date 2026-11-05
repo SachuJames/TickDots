@@ -1,6 +1,6 @@
-# Contributing to TickForge
+# Contributing to TickDots
 
-Thanks for considering a contribution. TickForge is early-stage, so design discussion in issues is especially welcome before large pull requests.
+Thanks for considering a contribution. TickDots is early-stage, so design discussion in issues is especially welcome before large pull requests.
 
 ## Branch naming
 
@@ -52,7 +52,7 @@ ci: run sanitizer build on pull requests
 
 ## Issue reporting
 
-* Bugs: include the TickForge version, compiler, OS, minimal reproduction (config + event snippet), and expected vs. actual behavior.
+* Bugs: include the TickDots version, compiler, OS, minimal reproduction (config + event snippet), and expected vs. actual behavior.
 * Design proposals: describe the problem, the proposed change to SPEC.md/ARCHITECTURE.md, and alternatives considered.
 
 ## Code of conduct

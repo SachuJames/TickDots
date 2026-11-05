@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
 // Canonical normalized event (SPEC.md section 2): the reproducibility
-// boundary of the TickForge pipeline. A parser's job ends when it hands
+// boundary of the TickDots pipeline. A parser's job ends when it hands
 // a validated Event stream to the replay engine; everything downstream is
 // a pure function of (events, config, version).
 //
@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "tickforge/event/event_type.hpp"
-#include "tickforge/event/side.hpp"
-#include "tickforge/event/types.hpp"
+#include "tickdots/event/event_type.hpp"
+#include "tickdots/event/side.hpp"
+#include "tickdots/event/types.hpp"
 
 #include <cstdint>
 #include <string>
 
-namespace tickforge {
+namespace tickdots {
 
 // Instrument identifier, e.g. "AAPL" (SPEC.md 2.2). Exactly one per
 // session; carried per event because the spec requires the field.
@@ -96,4 +96,4 @@ enum class EventValidationError : std::uint8_t {
 [[nodiscard]] std::string_view toString(EventValidationError error) noexcept;
 [[nodiscard]] EventValidationError validateEvent(const Event& event) noexcept;
 
-} // namespace tickforge
+} // namespace tickdots

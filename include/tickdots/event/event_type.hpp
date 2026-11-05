@@ -8,10 +8,10 @@
 #include <cstdint>
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 enum class EventType : std::uint8_t { NewOrder, ModifyOrder, CancelOrder };
 
 [[nodiscard]] std::string_view toString(EventType type) noexcept;
 
-} // namespace tickforge
+} // namespace tickdots

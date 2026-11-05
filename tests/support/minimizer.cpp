@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 std::vector<Event> renormalize(const std::vector<Event>& events) {
   std::vector<Event> out = events;
@@ -56,4 +56,4 @@ minimizeFailingSequence(const std::vector<Event>& events,
   return current;
 }
 
-} // namespace tickforge::test
+} // namespace tickdots::test

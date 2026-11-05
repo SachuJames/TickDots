@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "tickforge/core/splitmix64.hpp"
+#include "tickdots/core/splitmix64.hpp"
 
-namespace tickforge::test {
+namespace tickdots::test {
 
-using DeterministicRng = tickforge::SplitMix64;
+using DeterministicRng = tickdots::SplitMix64;
 
-} // namespace tickforge::test
+} // namespace tickdots::test

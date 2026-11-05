@@ -2,17 +2,17 @@
 //
 // Tests for the Side and EventType enums.
 
-#include "tickforge/event/event_type.hpp"
-#include "tickforge/event/side.hpp"
+#include "tickdots/event/event_type.hpp"
+#include "tickdots/event/side.hpp"
 
 #include <gtest/gtest.h>
 #include <string_view>
 
 namespace {
 
-using tickforge::EventType;
-using tickforge::Side;
-using tickforge::toString;
+using tickdots::EventType;
+using tickdots::Side;
+using tickdots::toString;
 
 TEST(SideTest, BidAndAskAreDistinct) {
   EXPECT_NE(Side::Bid, Side::Ask);
@@ -26,9 +26,9 @@ TEST(SideTest, ToString) {
 }
 
 TEST(SideTest, Opposite) {
-  EXPECT_EQ(tickforge::opposite(Side::Bid), Side::Ask);
-  EXPECT_EQ(tickforge::opposite(Side::Ask), Side::Bid);
-  EXPECT_EQ(tickforge::opposite(tickforge::opposite(Side::Bid)), Side::Bid);
+  EXPECT_EQ(tickdots::opposite(Side::Bid), Side::Ask);
+  EXPECT_EQ(tickdots::opposite(Side::Ask), Side::Bid);
+  EXPECT_EQ(tickdots::opposite(tickdots::opposite(Side::Bid)), Side::Bid);
 }
 
 TEST(EventTypeTest, ExactlyThreeDistinctTypes) {

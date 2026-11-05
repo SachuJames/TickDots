@@ -3,9 +3,9 @@
 // QueueTracker implementation. Position is always recomputed from the
 // live book; lifecycle is maintained from the observed event/fill stream.
 
-#include "tickforge/analytics/queue_tracker.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 void QueueTracker::designate(OrderId id) {
   designated_.insert(id);
@@ -136,4 +136,4 @@ QueueTracker::Lifecycle QueueTracker::lifecycle(const OrderBook& book, OrderId i
   return Lifecycle::Unknown;
 }
 
-} // namespace tickforge
+} // namespace tickdots

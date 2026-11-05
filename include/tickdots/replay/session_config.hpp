@@ -17,11 +17,11 @@
 //                    SPEC.md 6 requires the selection to exist so future
 //                    rules (e.g. pro-rata) are explicit.
 //   prngSeed       - optional; present only when a model needs randomness
-//                    (SPEC.md 4.3). TickForge has no stochastic models.
+//                    (SPEC.md 4.3). TickDots has no stochastic models.
 //   mode           - required; Strict default, Lenient on explicit
 //                    request (SPEC.md 11).
 //
-// Microstructure model parameters are intentionally absent: TickForge
+// Microstructure model parameters are intentionally absent: TickDots
 // implements no microstructure models (latency, fees), so there is no
 // schema to configure. They will join the contract when such a model
 // does (SPEC.md 10 lists the category; this documents the gap).
@@ -34,15 +34,15 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/replay_mode.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/replay_mode.hpp"
 
 #include <cstdint>
 #include <optional>
 #include <string>
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 // Matching rule selection (SPEC.md 6 and 10). Only price-time priority
 // exists; the enum exists so any future rule is an explicit, named
@@ -93,7 +93,7 @@ enum class ConfigError : std::uint8_t {
 //
 // Format (this is the file format; writing the string to a file is the
 // serialization):
-//   line 1: "tickforge-config/1"            (schema identifier + version)
+//   line 1: "tickdots-config/1"            (schema identifier + version)
 //   lines 2..n: "key=value", one per field, keys in byte-wise sorted
 //     order: instrument, latency-max-ns, latency-min-ns, lot-size,
 //     matching-rule, mode, prng-seed, tick-size. Absent optional
@@ -106,7 +106,7 @@ enum class ConfigError : std::uint8_t {
 
 enum class ConfigParseError : std::uint8_t {
   Ok = 0,
-  BadSchema,      // first line is not "tickforge-config/1"
+  BadSchema,      // first line is not "tickdots-config/1"
   MalformedLine,  // a line without exactly one '=' separator
   DuplicateField, // the same key appears twice
   UnknownField,   // a key outside the schema
@@ -138,4 +138,4 @@ struct ConfigParseResult {
 // Formats a config hash as 16 lowercase hex characters.
 [[nodiscard]] std::string formatConfigHash(std::uint64_t hash);
 
-} // namespace tickforge
+} // namespace tickdots

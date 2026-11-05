@@ -6,11 +6,11 @@
 // determinism: replaying the same stream twice yields equivalent fills
 // and equivalent book state.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -21,20 +21,20 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::Fill;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::ReplayError;
-using tickforge::ReplayResult;
-using tickforge::RestingOrder;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::Fill;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::ReplayError;
+using tickdots::ReplayResult;
+using tickdots::RestingOrder;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event newOrderEvent(Sequence seq, OrderId id, Side side, Price price, Quantity quantity) {
   Event event;
@@ -131,7 +131,7 @@ RunResult runStream(const std::vector<Event>& events, const std::vector<OrderId>
   // Replay one event at a time so per-event fills can be captured.
   for (const Event& event : events) {
     const std::vector<Event> single{event};
-    const ReplayResult r = tickforge::replayEvents(single, engine);
+    const ReplayResult r = tickdots::replayEvents(single, engine);
     if (!r.ok()) {
       result.replay = r;
       result.book = snapshotBook(book, ids);
@@ -153,7 +153,7 @@ TEST(ReplayMatchingIntegrationTest, FullPipelineProducesFillsAndBook) {
 
   OrderBook book;
   MatchingEngine engine(book);
-  const ReplayResult result = tickforge::replayEvents(events, engine);
+  const ReplayResult result = tickdots::replayEvents(events, engine);
   EXPECT_TRUE(result.ok());
 
   // The last event's fills: 10 at 100, 5 at 101.
@@ -194,7 +194,7 @@ TEST(ReplayMatchingIntegrationTest, ReplayAbortOnInvalidEvent) {
   };
 
   OrderBook book;
-  const ReplayResult result = tickforge::replayEvents(events, book);
+  const ReplayResult result = tickdots::replayEvents(events, book);
   // Note: replaying into the raw book (no matching) still validates and
   // dispatches; the unknown cancel aborts.
   EXPECT_EQ(result.error, ReplayError::UnknownOrder);
@@ -209,7 +209,7 @@ TEST(ReplayMatchingIntegrationTest, MatchingEngineRejectsUnknownCancel) {
 
   OrderBook book;
   MatchingEngine engine(book);
-  const ReplayResult result = tickforge::replayEvents(events, engine);
+  const ReplayResult result = tickdots::replayEvents(events, engine);
   EXPECT_EQ(result.error, ReplayError::UnknownOrder);
   EXPECT_EQ(result.failedAt, Sequence{1});
   // The resting ask from the first event remains.
@@ -225,7 +225,7 @@ TEST(ReplayMatchingIntegrationTest, ValidationStillGuardsMatching) {
 
   OrderBook book;
   MatchingEngine engine(book);
-  const ReplayResult result = tickforge::replayEvents(events, engine);
+  const ReplayResult result = tickdots::replayEvents(events, engine);
   EXPECT_EQ(result.error, ReplayError::InvalidEvent);
   // The first event was processed (ask rests); the invalid one never ran.
   EXPECT_TRUE(book.contains(OrderId{1}));

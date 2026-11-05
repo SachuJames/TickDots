@@ -30,18 +30,18 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/event_processor.hpp"
-#include "tickforge/replay/replay_mode.hpp"
-#include "tickforge/replay/session_config.hpp"
-#include "tickforge/version.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/event_processor.hpp"
+#include "tickdots/replay/replay_mode.hpp"
+#include "tickdots/replay/session_config.hpp"
+#include "tickdots/version.hpp"
 
 #include <cstdint>
 #include <optional>
 #include <span>
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 enum class ReplayError : std::uint8_t {
   Ok = 0,
@@ -70,7 +70,7 @@ struct ReplayResult {
   // Records which mode produced this result (SPEC.md 11: lenient use
   // must be recorded in the output).
   ReplayMode mode = ReplayMode::Strict;
-  // Result metadata (SPEC.md 9.6): the TickForge version and the hash
+  // Result metadata (SPEC.md 9.6): the TickDots version and the hash
   // of the effective session configuration. configHash is set only when
   // the replay ran with an explicit SessionConfig; otherwise the run
   // had no configuration to identify.
@@ -105,9 +105,9 @@ struct ReplayResult {
 // configuration yields ReplayError::InvalidConfig and the processor
 // observes nothing. The configuration's instrument must match the
 // event stream's instrument (InstrumentMismatch otherwise). The replay
-// runs with config.mode, and the result embeds the TickForge version
+// runs with config.mode, and the result embeds the TickDots version
 // and the configuration hash (SPEC.md 9.6).
 [[nodiscard]] ReplayResult
 replayEvents(std::span<const Event> events, EventProcessor& processor, const SessionConfig& config);
 
-} // namespace tickforge
+} // namespace tickdots

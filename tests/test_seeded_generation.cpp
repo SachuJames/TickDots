@@ -13,10 +13,10 @@
 #include "tests/support/deterministic_rng.hpp"
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/matching_engine.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/matching_engine.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // ---------------------------------------------------------------------
@@ -258,4 +258,4 @@ TEST(SeededGeneration, DifferentSeedsProduceDifferentSessions) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

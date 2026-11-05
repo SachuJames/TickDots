@@ -12,17 +12,17 @@
 
 #include "tests/support/deterministic_rng.hpp"
 #include "tests/support/event_generator.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
-#include "tickforge/replay/session_config.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
+#include "tickdots/replay/session_config.hpp"
 
 #include <cstdlib>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Independent FNV-1a 64-bit reference (test oracle, not production code).
@@ -106,7 +106,7 @@ TEST(ConfigValidation, PrngSeedBoundaries) {
 TEST(ConfigSerialization, LenientModeExactBytes) {
   SessionConfig config = minimalConfig();
   config.mode = ReplayMode::Lenient;
-  const std::string expected = "tickforge-config/1\n"
+  const std::string expected = "tickdots-config/1\n"
                                "instrument=AAPL\n"
                                "matching-rule=price-time-priority\n"
                                "mode=lenient\n";
@@ -116,7 +116,7 @@ TEST(ConfigSerialization, LenientModeExactBytes) {
 TEST(ConfigSerialization, PrngSeedExactBytes) {
   SessionConfig config = minimalConfig();
   config.prngSeed = 42;
-  const std::string expected = "tickforge-config/1\n"
+  const std::string expected = "tickdots-config/1\n"
                                "instrument=AAPL\n"
                                "matching-rule=price-time-priority\n"
                                "mode=strict\n"
@@ -157,14 +157,14 @@ TEST(ConfigSerialization, RepeatedSerializationIdentical) {
 TEST(ConfigHash, MinimalConfigKnownAnswer) {
   // Canonical bytes for minimal AAPL/strict config, hashed with the
   // independent test-side FNV-1a above.
-  const std::string canonical = "tickforge-config/1\n"
+  const std::string canonical = "tickdots-config/1\n"
                                 "instrument=AAPL\n"
                                 "matching-rule=price-time-priority\n"
                                 "mode=strict\n";
   const std::uint64_t expected = fnv1a64(canonical);
   EXPECT_EQ(hashConfig(minimalConfig()), expected);
   // Cross-check against the pre-existing known answer in
-  // test_session_config.cpp (0xa8d183ecd7db2b76 was for a different
+  // test_session_config.cpp (0x071e2e7bb927ddad was for a different
   // config with lot-size/tick-size; this is the minimal config).
 }
 
@@ -431,8 +431,8 @@ TEST(ConfigProperty, RoundTripPreservesSemantics) {
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity): test with many assertions.
 TEST(ConfigProperty, ExtendedStress) {
-  if (std::getenv("TICKFORGE_EXTENDED") == nullptr) {
-    GTEST_SKIP() << "Set TICKFORGE_EXTENDED=1 to run the extended stress profile.";
+  if (std::getenv("TICKDOTS_EXTENDED") == nullptr) {
+    GTEST_SKIP() << "Set TICKDOTS_EXTENDED=1 to run the extended stress profile.";
   }
   // 20 seeds: serialization stability, hash determinism, oracle agreement.
   for (std::uint64_t seed = 1; seed <= 20; ++seed) {
@@ -454,4 +454,4 @@ TEST(ConfigProperty, ExtendedStress) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

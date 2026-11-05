@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 bool ReferenceBook::crosses(Side aggressorSide, Price limit, Price resting) noexcept {
   if (aggressorSide == Side::Bid) {
@@ -195,4 +195,4 @@ std::vector<OrderId> ReferenceBook::ordersAtLevel(Side side, Price price) const 
   return ids;
 }
 
-} // namespace tickforge::test
+} // namespace tickdots::test

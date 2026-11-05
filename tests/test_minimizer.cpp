@@ -6,12 +6,12 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/minimizer.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <algorithm>
 #include <gtest/gtest.h>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters): test factory.
@@ -68,4 +68,4 @@ TEST(Minimizer, Deterministic) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

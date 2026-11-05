@@ -1,9 +1,9 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// TickForge CSV market-data parser (SPEC.md section 9, stage 2).
+// TickDots CSV market-data parser (SPEC.md section 9, stage 2).
 //
 // The parser is the input boundary: it converts one external CSV format
-// into normalized TickForge Events. It owns sequence assignment,
+// into normalized TickDots Events. It owns sequence assignment,
 // field validation, and rejection of malformed records with reasons.
 // It is the ONLY place allowed to know about the CSV format.
 //
@@ -35,7 +35,7 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstdint>
 #include <istream>
@@ -43,7 +43,7 @@
 #include <string_view>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 // Reason a CSV record was rejected. Every dropped record gets one;
 // parsers must not silently drop records (SPEC.md section 11).
@@ -120,4 +120,4 @@ private:
   parseQuantityField(std::string_view field, Event& event, std::string& diagnostic) noexcept;
 };
 
-} // namespace tickforge
+} // namespace tickdots

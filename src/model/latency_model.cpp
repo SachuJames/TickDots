@@ -2,9 +2,9 @@
 //
 // Per-fill simulated latency model implementation (SPEC.md 15).
 
-#include "tickforge/model/latency_model.hpp"
+#include "tickdots/model/latency_model.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 LatencyModelError validateLatencyModelConfig(const LatencyModelConfig& config) noexcept {
   if (config.minLatencyNs < 0) {
@@ -55,4 +55,4 @@ LatencyArtifact LatencyModel::artifact() const {
   return out;
 }
 
-} // namespace tickforge
+} // namespace tickdots

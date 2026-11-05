@@ -3,9 +3,9 @@
 // ExecutionStatistics tests: exact integer arithmetic, quantity-weighted
 // averages, min/max, buy/sell splits, conservation, and determinism.
 
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -14,14 +14,14 @@
 
 namespace {
 
-using tickforge::ExecutionStatistics;
-using tickforge::Fill;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::ExecutionStatistics;
+using tickdots::Fill;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Fill makeFill(OrderId aggressor, OrderId resting, Side side, Price price, Quantity quantity) {
   Fill fill;

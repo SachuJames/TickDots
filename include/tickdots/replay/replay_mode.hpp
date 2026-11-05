@@ -10,10 +10,10 @@
 #include <cstdint>
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 enum class ReplayMode : std::uint8_t { Strict, Lenient };
 
 [[nodiscard]] std::string_view toString(ReplayMode mode) noexcept;
 
-} // namespace tickforge
+} // namespace tickdots

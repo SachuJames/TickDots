@@ -1,10 +1,10 @@
-# TickForge Benchmarking Policy
+# TickDots Benchmarking Policy
 
 **Status:** Policy only for now. No benchmark harness exists yet and no performance claims are made.
 
 ## The rule
 
-Every performance claim about TickForge MUST ship with a reproducible benchmark. The sentence "TickForge is fast" is not a claim; the following is:
+Every performance claim about TickDots MUST ship with a reproducible benchmark. The sentence "TickDots is fast" is not a claim; the following is:
 
 ```text
 Dataset:      <name, source, event count, date range>
@@ -17,7 +17,7 @@ Median latency: <ns per event>
 p99 latency:    <ns per event>
 ```
 
-Any benchmark report missing one of these fields is incomplete and MUST NOT be published as a TickForge result.
+Any benchmark report missing one of these fields is incomplete and MUST NOT be published as a TickDots result.
 
 ## Methodology requirements (for the future harness)
 
@@ -29,8 +29,8 @@ Any benchmark report missing one of these fields is incomplete and MUST NOT be p
 
 ## Reproducibility benchmark (planned)
 
-A public script will let anyone rerun the headline benchmark: it downloads the pinned dataset, builds the pinned TickForge version, runs the harness, and prints the report above. Discrepancies beyond stated tolerance are treated as bugs.
+A public script will let anyone rerun the headline benchmark: it downloads the pinned dataset, builds the pinned TickDots version, runs the harness, and prints the report above. Discrepancies beyond stated tolerance are treated as bugs.
 
 ## Current state
 
-As of v0.2.0, TickForge still makes zero performance claims. This document exists so the claims made later are honest.
+As of v0.2.0, TickDots still makes zero performance claims. This document exists so the claims made later are honest.

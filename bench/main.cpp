@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// tickforge_bench: reproducible benchmark driver. Builds the
+// tickdots_bench: reproducible benchmark driver. Builds the
 // selected deterministic workloads, verifies their declared
 // outcomes on an untimed pass, then runs the warm-up and repetition
 // protocol. Exit codes: 0 success, 2 invalid arguments, 1 benchmark
@@ -17,8 +17,8 @@
 
 namespace {
 
-int run(const tickforge::bench::BenchOptions& options) {
-  using namespace tickforge::bench;
+int run(const tickdots::bench::BenchOptions& options) {
+  using namespace tickdots::bench;
   const Metadata metadata = benchmarkMetadata();
   const BenchConfig config{options.warmups, options.repetitions};
 
@@ -86,12 +86,12 @@ int run(const tickforge::bench::BenchOptions& options) {
 
 int main(int argc, char* argv[]) {
   const std::vector<std::string> args(argv + 1, argv + argc);
-  const auto options = tickforge::bench::parseBenchArgs(args);
+  const auto options = tickdots::bench::parseBenchArgs(args);
   if (!options.has_value()) {
     return 2;
   }
   if (options->help) {
-    tickforge::bench::printBenchUsage(std::cout);
+    tickdots::bench::printBenchUsage(std::cout);
     return 0;
   }
   try {

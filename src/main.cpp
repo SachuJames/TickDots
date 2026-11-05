@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// TickForge command-line interface (SPEC.md section 13).
+// TickDots command-line interface (SPEC.md section 13).
 //
 // Replays one CSV event file through the library pipeline: parse the
 // stream with CsvParser, verify the stream read completely, then run
@@ -8,15 +8,15 @@
 // main() only translates arguments and exceptions into the documented
 // exit codes; all semantics live in the library.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/model/latency_model.hpp"
-#include "tickforge/model/latency_observer.hpp"
-#include "tickforge/replay/event_processor.hpp"
-#include "tickforge/replay/replay.hpp"
-#include "tickforge/replay/session_config.hpp"
-#include "tickforge/version.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/model/latency_model.hpp"
+#include "tickdots/model/latency_observer.hpp"
+#include "tickdots/replay/event_processor.hpp"
+#include "tickdots/replay/replay.hpp"
+#include "tickdots/replay/session_config.hpp"
+#include "tickdots/version.hpp"
 
 #include <charconv>
 #include <cstdint>
@@ -40,7 +40,7 @@ constexpr int kExitInternal = 6;
 struct CliOptions {
   std::optional<std::string> input;
   std::optional<std::string> instrument;
-  tickforge::ReplayMode mode = tickforge::ReplayMode::Strict;
+  tickdots::ReplayMode mode = tickdots::ReplayMode::Strict;
   std::optional<std::string> tickSize;
   std::optional<std::string> lotSize;
   std::optional<std::uint64_t> seed;
@@ -55,34 +55,34 @@ struct CliOptions {
 // reports must be collected per event. Events are delegated to an
 // inner processor (the engine itself, or the latency observer
 // wrapping it) while fills are read from the engine.
-class FillCollector final : public tickforge::EventProcessor {
+class FillCollector final : public tickdots::EventProcessor {
 public:
-  FillCollector(tickforge::EventProcessor& processor, tickforge::MatchingEngine& engine)
+  FillCollector(tickdots::EventProcessor& processor, tickdots::MatchingEngine& engine)
       : processor_(processor), engine_(engine) {}
 
-  bool onEvent(const tickforge::Event& event) override {
+  bool onEvent(const tickdots::Event& event) override {
     const bool applied = processor_.onEvent(event);
     const auto& produced = engine_.fills();
     fills_.insert(fills_.end(), produced.begin(), produced.end());
     return applied;
   }
 
-  [[nodiscard]] const std::vector<tickforge::Fill>& fills() const noexcept {
+  [[nodiscard]] const std::vector<tickdots::Fill>& fills() const noexcept {
     return fills_;
   }
 
 private:
-  tickforge::EventProcessor& processor_;
-  tickforge::MatchingEngine& engine_;
-  std::vector<tickforge::Fill> fills_;
+  tickdots::EventProcessor& processor_;
+  tickdots::MatchingEngine& engine_;
+  std::vector<tickdots::Fill> fills_;
 };
 
 void printUsage(std::ostream& out) {
-  out << "Usage: tickforge --input PATH --instrument SYMBOL [--mode strict|lenient]\n"
+  out << "Usage: tickdots --input PATH --instrument SYMBOL [--mode strict|lenient]\n"
          "                      [--tick-size VALUE] [--lot-size VALUE] [--seed VALUE]\n"
          "                      [--latency-min-ns VALUE] [--latency-max-ns VALUE]\n"
-         "       tickforge --help\n"
-         "       tickforge --version\n"
+         "       tickdots --help\n"
+         "       tickdots --version\n"
          "\n"
          "Replay a CSV event file deterministically.\n"
          "\n"
@@ -98,7 +98,7 @@ void printUsage(std::ostream& out) {
          "  --latency-max-ns N  Maximum simulated latency in nanoseconds;\n"
          "                      requires --latency-min-ns and --seed\n"
          "  --help              Print this usage information\n"
-         "  --version           Print the TickForge version\n";
+         "  --version           Print the TickDots version\n";
 }
 
 // Parses argv into options. On error, prints the diagnostic and usage
@@ -177,9 +177,9 @@ bool parseArguments(const std::vector<std::string_view>& args, CliOptions& optio
         return false;
       }
       if (value == "strict") {
-        options.mode = tickforge::ReplayMode::Strict;
+        options.mode = tickdots::ReplayMode::Strict;
       } else if (value == "lenient") {
-        options.mode = tickforge::ReplayMode::Lenient;
+        options.mode = tickdots::ReplayMode::Lenient;
       } else {
         return fail("invalid mode (expected strict or lenient)");
       }
@@ -247,7 +247,7 @@ bool parseArguments(const std::vector<std::string_view>& args, CliOptions& optio
 // Prints the optional latency section (SPEC.md 13.4): the model's
 // identity and bounds, then every sample in fill order with
 // zero-based indices. Simulated values, not measurements.
-void printLatencySection(const tickforge::LatencyArtifact& artifact) {
+void printLatencySection(const tickdots::LatencyArtifact& artifact) {
   std::cout << "Latency model: " << artifact.modelName << " v" << artifact.modelVersion << "\n";
   std::cout << "Latency seed: " << artifact.seed << "\n";
   std::cout << "Latency min (ns): " << artifact.minLatencyNs << "\n";
@@ -260,7 +260,7 @@ void printLatencySection(const tickforge::LatencyArtifact& artifact) {
 
 // Runs one replay from validated options; returns the exit code.
 int runReplay(const CliOptions& options) {
-  tickforge::SessionConfig config;
+  tickdots::SessionConfig config;
   config.instrument = *options.instrument;
   config.mode = options.mode;
   config.tickSize = options.tickSize;
@@ -268,9 +268,9 @@ int runReplay(const CliOptions& options) {
   config.prngSeed = options.seed;
   config.latencyMinNs = options.latencyMinNs;
   config.latencyMaxNs = options.latencyMaxNs;
-  if (const auto cfgError = tickforge::validateConfig(config);
-      cfgError != tickforge::ConfigError::Ok) {
-    std::cerr << "error: invalid session configuration: " << tickforge::toString(cfgError) << "\n";
+  if (const auto cfgError = tickdots::validateConfig(config);
+      cfgError != tickdots::ConfigError::Ok) {
+    std::cerr << "error: invalid session configuration: " << tickdots::toString(cfgError) << "\n";
     return kExitConfigOrReplay;
   }
 
@@ -280,8 +280,8 @@ int runReplay(const CliOptions& options) {
     return kExitInput;
   }
 
-  const tickforge::CsvParser parser{*options.instrument};
-  const tickforge::StreamResult parsed = parser.parseStream(input);
+  const tickdots::CsvParser parser{*options.instrument};
+  const tickdots::StreamResult parsed = parser.parseStream(input);
   // StreamResult cannot distinguish clean EOF from a read failure
   // (ARCHITECTURE.md 19.2): an Ok prefix on a failed stream is not a
   // complete file, so the bad bit decides before the parse result.
@@ -289,11 +289,11 @@ int runReplay(const CliOptions& options) {
     std::cerr << "error: failed while reading input file: " << *options.input << "\n";
     return kExitInput;
   }
-  if (parsed.error != tickforge::ParseError::Ok) {
+  if (parsed.error != tickdots::ParseError::Ok) {
     std::cerr << "error: CSV parse failed at line " << parsed.lineNumber << ": "
-              << tickforge::toString(parsed.error);
-    if (parsed.validationError != tickforge::EventValidationError::Ok) {
-      std::cerr << " (" << tickforge::toString(parsed.validationError) << ")";
+              << tickdots::toString(parsed.error);
+    if (parsed.validationError != tickdots::EventValidationError::Ok) {
+      std::cerr << " (" << tickdots::toString(parsed.validationError) << ")";
     }
     if (!parsed.diagnostic.empty()) {
       std::cerr << ": " << parsed.diagnostic;
@@ -302,39 +302,39 @@ int runReplay(const CliOptions& options) {
     return kExitParse;
   }
 
-  tickforge::OrderBook book;
-  tickforge::MatchingEngine engine{book};
+  tickdots::OrderBook book;
+  tickdots::MatchingEngine engine{book};
   // With latency enabled, the observer wraps the engine and the
   // collector delegates through it, so the model sees exactly the
   // fills the collector counts (SPEC.md 15.3). Disabled, the chain
   // is the engine alone and no model exists.
-  const auto model = tickforge::LatencyModel::fromConfig(config);
-  std::optional<tickforge::LatencyObserver> observer;
+  const auto model = tickdots::LatencyModel::fromConfig(config);
+  std::optional<tickdots::LatencyObserver> observer;
   if (model.has_value()) {
     observer.emplace(engine, *model);
   }
-  tickforge::EventProcessor* inner = &engine;
+  tickdots::EventProcessor* inner = &engine;
   if (observer.has_value()) {
     inner = &*observer;
   }
   FillCollector collector{*inner, engine};
-  const tickforge::ReplayResult result = tickforge::replayEvents(parsed.events, collector, config);
+  const tickdots::ReplayResult result = tickdots::replayEvents(parsed.events, collector, config);
   if (!result.ok()) {
-    std::cerr << "error: replay failed: " << tickforge::toString(result.error) << " at sequence "
+    std::cerr << "error: replay failed: " << tickdots::toString(result.error) << " at sequence "
               << result.failedAt.value();
-    if (result.validationReason != tickforge::EventValidationError::Ok) {
-      std::cerr << " (" << tickforge::toString(result.validationReason) << ")";
+    if (result.validationReason != tickdots::EventValidationError::Ok) {
+      std::cerr << " (" << tickdots::toString(result.validationReason) << ")";
     }
     std::cerr << "\n";
     return kExitConfigOrReplay;
   }
 
   const std::uint64_t processed = parsed.events.size() - result.skippedCount;
-  std::cout << "TickForge v" << tickforge::kVersion << "\n";
+  std::cout << "TickDots v" << tickdots::kVersion << "\n";
   std::cout << "Input: " << *options.input << "\n";
   std::cout << "Instrument: " << *options.instrument << "\n";
   std::cout << "Replay mode: "
-            << (options.mode == tickforge::ReplayMode::Strict ? "strict" : "lenient") << "\n";
+            << (options.mode == tickdots::ReplayMode::Strict ? "strict" : "lenient") << "\n";
   std::cout << "Events processed: " << processed << "\n";
   std::cout << "Events skipped: " << result.skippedCount << "\n";
   std::cout << "Fills: " << collector.fills().size() << "\n";
@@ -351,7 +351,7 @@ int runReplay(const CliOptions& options) {
   } else {
     std::cout << "none\n";
   }
-  std::cout << "Config hash: " << tickforge::formatConfigHash(*result.configHash) << "\n";
+  std::cout << "Config hash: " << tickdots::formatConfigHash(*result.configHash) << "\n";
   std::cout << "Replay status: success\n";
   if (observer.has_value()) {
     printLatencySection(observer->artifact());
@@ -373,7 +373,7 @@ int main(int argc, char* argv[]) {
       return kExitOk;
     }
     if (options.version) {
-      std::cout << "TickForge v" << tickforge::kVersion << "\n";
+      std::cout << "TickDots v" << tickdots::kVersion << "\n";
       return kExitOk;
     }
     if (!options.input.has_value() || !options.instrument.has_value()) {

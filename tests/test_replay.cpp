@@ -4,9 +4,9 @@
 // instrument scoping, the validation gate, dispatch, and the strict-mode
 // error contract (SPEC.md sections 3.3 and 11).
 
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/event_processor.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/event_processor.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -17,18 +17,18 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventProcessor;
-using tickforge::EventType;
-using tickforge::EventValidationError;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::ReplayError;
-using tickforge::ReplayResult;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventProcessor;
+using tickdots::EventType;
+using tickdots::EventValidationError;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::ReplayError;
+using tickdots::ReplayResult;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event makeEvent(Timestamp timestamp, Sequence seq, EventType type, OrderId id) {
   Event event;
@@ -66,7 +66,7 @@ public:
 TEST(ReplayTest, EmptySpanReturnsOk) {
   RecordingProcessor processor;
   const std::vector<Event> events;
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_TRUE(result.ok());
   EXPECT_EQ(result.error, ReplayError::Ok);
   EXPECT_TRUE(processor.seen.empty());
@@ -79,7 +79,7 @@ TEST(ReplayTest, DispatchesInStreamOrder) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{2}),
       makeEvent(Timestamp{300}, Sequence{2}, EventType::CancelOrder, OrderId{1}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_TRUE(result.ok());
   ASSERT_EQ(processor.seen.size(), 3U);
   EXPECT_EQ(processor.seen[0], Sequence{0});
@@ -94,7 +94,7 @@ TEST(ReplayTest, SameTimestampDispatchedBySequence) {
       makeEvent(Timestamp{100}, Sequence{2}, EventType::NewOrder, OrderId{2}),
       makeEvent(Timestamp{100}, Sequence{3}, EventType::NewOrder, OrderId{3}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_TRUE(result.ok());
   ASSERT_EQ(processor.seen.size(), 3U);
   EXPECT_EQ(processor.seen[0], Sequence{1});
@@ -108,7 +108,7 @@ TEST(ReplayTest, UnsortedInputIsRejected) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{1}),
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{2}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, ReplayError::UnsortedInput);
   EXPECT_EQ(result.failedAt, Sequence{0});
@@ -123,7 +123,7 @@ TEST(ReplayTest, DuplicateKeyIsRejected) {
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{1}),
       makeEvent(Timestamp{100}, Sequence{0}, EventType::NewOrder, OrderId{2}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::UnsortedInput);
   EXPECT_EQ(result.failedAt, Sequence{0});
 }
@@ -135,7 +135,7 @@ TEST(ReplayTest, InvalidEventAbortsWithReason) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{2}),
   };
   events[1].quantity = Quantity{0}; // invalid: zero quantity on NewOrder
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::InvalidEvent);
   EXPECT_EQ(result.failedAt, Sequence{1});
   EXPECT_EQ(result.validationReason, EventValidationError::InvalidQuantity);
@@ -147,7 +147,7 @@ TEST(ReplayTest, UnknownOrderOnCancel) {
   const std::vector<Event> events = {
       makeEvent(Timestamp{100}, Sequence{5}, EventType::CancelOrder, OrderId{99}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::UnknownOrder);
   EXPECT_EQ(result.failedAt, Sequence{5});
 }
@@ -158,7 +158,7 @@ TEST(ReplayTest, UnknownOrderOnModify) {
       makeEvent(Timestamp{100}, Sequence{6}, EventType::ModifyOrder, OrderId{99}),
   };
   // A modify carrying a price change is otherwise valid.
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::UnknownOrder);
   EXPECT_EQ(result.failedAt, Sequence{6});
 }
@@ -168,7 +168,7 @@ TEST(ReplayTest, DuplicateOrderOnNew) {
   const std::vector<Event> events = {
       makeEvent(Timestamp{100}, Sequence{7}, EventType::NewOrder, OrderId{1}),
   };
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::DuplicateOrder);
   EXPECT_EQ(result.failedAt, Sequence{7});
 }
@@ -180,19 +180,19 @@ TEST(ReplayTest, InstrumentMismatchIsRejected) {
       makeEvent(Timestamp{200}, Sequence{1}, EventType::NewOrder, OrderId{2}),
   };
   events[1].instrument = "MSFT";
-  const ReplayResult result = tickforge::replayEvents(events, processor);
+  const ReplayResult result = tickdots::replayEvents(events, processor);
   EXPECT_EQ(result.error, ReplayError::InstrumentMismatch);
   EXPECT_EQ(result.failedAt, Sequence{1});
   ASSERT_EQ(processor.seen.size(), 1U);
 }
 
 TEST(ReplayTest, ErrorToString) {
-  EXPECT_EQ(tickforge::toString(ReplayError::Ok), std::string_view{"Ok"});
-  EXPECT_EQ(tickforge::toString(ReplayError::UnsortedInput), std::string_view{"UnsortedInput"});
-  EXPECT_EQ(tickforge::toString(ReplayError::InvalidEvent), std::string_view{"InvalidEvent"});
-  EXPECT_EQ(tickforge::toString(ReplayError::UnknownOrder), std::string_view{"UnknownOrder"});
-  EXPECT_EQ(tickforge::toString(ReplayError::DuplicateOrder), std::string_view{"DuplicateOrder"});
-  EXPECT_EQ(tickforge::toString(ReplayError::InstrumentMismatch),
+  EXPECT_EQ(tickdots::toString(ReplayError::Ok), std::string_view{"Ok"});
+  EXPECT_EQ(tickdots::toString(ReplayError::UnsortedInput), std::string_view{"UnsortedInput"});
+  EXPECT_EQ(tickdots::toString(ReplayError::InvalidEvent), std::string_view{"InvalidEvent"});
+  EXPECT_EQ(tickdots::toString(ReplayError::UnknownOrder), std::string_view{"UnknownOrder"});
+  EXPECT_EQ(tickdots::toString(ReplayError::DuplicateOrder), std::string_view{"DuplicateOrder"});
+  EXPECT_EQ(tickdots::toString(ReplayError::InstrumentMismatch),
             std::string_view{"InstrumentMismatch"});
 }
 

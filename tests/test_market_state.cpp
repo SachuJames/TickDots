@@ -4,23 +4,23 @@
 // OrderBook. The view observes; it never mutates the book and never
 // invents order identity.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/market_state.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/market_state.hpp"
 
 #include <gtest/gtest.h>
 #include <optional>
 
 namespace {
 
-using tickforge::LevelAggregate;
-using tickforge::MarketStateView;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Side;
+using tickdots::LevelAggregate;
+using tickdots::MarketStateView;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Side;
 
 // Build a book directly through the controlled mutation API.
 OrderBook makeBook() {

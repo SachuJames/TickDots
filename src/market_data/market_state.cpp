@@ -4,9 +4,9 @@
 // OrderBook's public read APIs (priceLevels, ordersAtLevel, find); the
 // view never touches book internals and never mutates state.
 
-#include "tickforge/market_data/market_state.hpp"
+#include "tickdots/market_data/market_state.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 MarketStateView::MarketStateView(const OrderBook& book) noexcept : book_(book) {}
 
@@ -67,4 +67,4 @@ std::optional<LevelAggregate> MarketStateView::level(Side side, Price price) con
   return aggregateLevel(book_, side, price);
 }
 
-} // namespace tickforge
+} // namespace tickdots

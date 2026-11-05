@@ -2,7 +2,7 @@
 //
 // Deterministic valid event generator (test infrastructure only).
 //
-// Generates bounded sequences of valid TickForge events using a
+// Generates bounded sequences of valid TickDots events using a
 // DeterministicRng and an internal ReferenceBook to track live orders.
 // Because the generator applies each event to its own reference book,
 // cancels and modifies always target live orders with consistent
@@ -15,14 +15,14 @@
 
 #include "tests/support/deterministic_rng.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 struct GeneratorConfig {
   std::uint64_t seed = 0;
@@ -74,4 +74,4 @@ private:
   [[nodiscard]] ReferenceOrder randomLiveOrder();
 };
 
-} // namespace tickforge::test
+} // namespace tickdots::test

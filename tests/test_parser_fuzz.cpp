@@ -10,14 +10,14 @@
 //   - Numeric boundaries are handled per the contract
 
 #include "tests/support/csv_generator.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
 
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Verifies dense sequences from 0 for a batch of events.
@@ -267,4 +267,4 @@ TEST(ParserFuzz, RepeatableParsing) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

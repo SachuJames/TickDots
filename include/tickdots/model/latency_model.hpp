@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include "tickforge/core/splitmix64.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/replay/session_config.hpp"
+#include "tickdots/core/splitmix64.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/replay/session_config.hpp"
 
 #include <cstdint>
 #include <optional>
@@ -26,7 +26,7 @@
 #include <string_view>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 // Model identity (SPEC.md 15). Changing any output-affecting rule
 // (algorithm, mapping, draw count, bounds interpretation, unit) is
@@ -104,4 +104,4 @@ private:
   std::vector<std::int64_t> samples_;
 };
 
-} // namespace tickforge
+} // namespace tickdots

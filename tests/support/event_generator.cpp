@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <sstream>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 EventGenerator::EventGenerator(const GeneratorConfig& config)
     : config_(config), rng_(config.seed) {}
@@ -151,4 +151,4 @@ std::string EventGenerator::describe(const Event& event) {
   return out.str();
 }
 
-} // namespace tickforge::test
+} // namespace tickdots::test

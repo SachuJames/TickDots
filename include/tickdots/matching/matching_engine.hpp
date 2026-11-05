@@ -35,14 +35,14 @@
 
 #pragma once
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/replay/event_processor.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/replay/event_processor.hpp"
 
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 class MatchingEngine : public EventProcessor {
 public:
@@ -82,4 +82,4 @@ private:
   static bool crosses(Side aggressorSide, Price limitPrice, Price restingPrice) noexcept;
 };
 
-} // namespace tickforge
+} // namespace tickdots

@@ -15,7 +15,7 @@
 
 #include <cstdint>
 
-namespace tickforge {
+namespace tickdots {
 
 class SplitMix64 {
 public:
@@ -49,4 +49,4 @@ private:
   std::uint64_t state_;
 };
 
-} // namespace tickforge
+} // namespace tickdots

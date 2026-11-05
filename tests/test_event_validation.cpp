@@ -3,7 +3,7 @@
 // Tests for validateEvent(): the explicit, separate validation step a
 // parser runs before normalized events reach the replay engine.
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -11,16 +11,16 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::EventValidationError;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
-using tickforge::validateEvent;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::EventValidationError;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
+using tickdots::validateEvent;
 
 Event makeEvent(EventType type) {
   Event event;
@@ -132,10 +132,10 @@ TEST(EventValidationTest, CancelRejectsStaleQuantity) {
 }
 
 TEST(EventValidationTest, ErrorToString) {
-  EXPECT_EQ(tickforge::toString(EventValidationError::Ok), std::string_view{"Ok"});
-  EXPECT_EQ(tickforge::toString(EventValidationError::InvalidPrice),
+  EXPECT_EQ(tickdots::toString(EventValidationError::Ok), std::string_view{"Ok"});
+  EXPECT_EQ(tickdots::toString(EventValidationError::InvalidPrice),
             std::string_view{"InvalidPrice"});
-  EXPECT_EQ(tickforge::toString(EventValidationError::UnexpectedCancelPayload),
+  EXPECT_EQ(tickdots::toString(EventValidationError::UnexpectedCancelPayload),
             std::string_view{"UnexpectedCancelPayload"});
 }
 

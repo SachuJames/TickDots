@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
-namespace tickforge {
+namespace tickdots {
 
 struct Fill {
   OrderId aggressorId; // incoming order that crossed the book
@@ -34,4 +34,4 @@ struct Fill {
   Sequence sequence;   // aggressor event's seq
 };
 
-} // namespace tickforge
+} // namespace tickdots

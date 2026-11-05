@@ -3,13 +3,13 @@
 // CsvParser implementation. All numeric conversion uses std::from_chars:
 // locale-independent, exception-free, with exact overflow detection.
 
-#include "tickforge/market_data/csv_parser.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
 
 #include <array>
 #include <charconv>
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 namespace {
 
@@ -320,4 +320,4 @@ StreamResult CsvParser::parseStream(std::istream& input) const {
   return result;
 }
 
-} // namespace tickforge
+} // namespace tickdots

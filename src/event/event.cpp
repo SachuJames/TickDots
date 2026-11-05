@@ -2,13 +2,13 @@
 //
 // Implementation of the normalized event model's non-trivial functions:
 // enum stringification and event validation. Kept out of the headers so
-// the public interface stays declarative; see include/tickforge/event/.
+// the public interface stays declarative; see include/tickdots/event/.
 
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <string_view>
 
-namespace tickforge {
+namespace tickdots {
 
 std::string_view toString(Side side) noexcept {
   switch (side) {
@@ -101,4 +101,4 @@ EventValidationError validateEvent(const Event& event) noexcept {
   return EventValidationError::Ok;
 }
 
-} // namespace tickforge
+} // namespace tickdots

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// Strongly typed domain primitives for the TickForge normalized event
+// Strongly typed domain primitives for the TickDots normalized event
 // model (SPEC.md section 2). Each wrapper exists so the compiler rejects
 // accidental mixing of timestamps, sequence numbers, order ids, prices,
 // and quantities. The wrappers are trivial value types: constexpr,
@@ -14,7 +14,7 @@
 #include <functional>
 #include <limits>
 
-namespace tickforge {
+namespace tickdots {
 
 // Timestamp: signed 64-bit nanoseconds since the Unix epoch (SPEC.md 3.1).
 // Signedness is deliberate: pre-epoch and relative-time fixtures stay
@@ -131,15 +131,15 @@ private:
   std::int64_t lots_;
 };
 
-} // namespace tickforge
+} // namespace tickdots
 
 namespace std {
 
 // Lets OrderId serve as a key in unordered containers (the future order
 // book indexes resting orders by id).
 template <>
-struct hash<tickforge::OrderId> {
-  std::size_t operator()(tickforge::OrderId id) const noexcept {
+struct hash<tickdots::OrderId> {
+  std::size_t operator()(tickdots::OrderId id) const noexcept {
     return std::hash<std::uint64_t>{}(id.value());
   }
 };

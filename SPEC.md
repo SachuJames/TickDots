@@ -1,10 +1,10 @@
-# TickForge Technical Specification
+# TickDots Technical Specification
 
 **Status:** Day 01 draft, normative for all future implementation.
 **Version:** 0.2.0
 **Language:** C++20 is the canonical implementation language.
 
-This document defines the domain concepts that TickForge must implement.
+This document defines the domain concepts that TickDots must implement.
 Nothing in this spec is optional for the components it covers: if a later
 design decision conflicts with this document, the document must be amended
 first, with the reason recorded in the commit message.
@@ -37,7 +37,7 @@ Conformance language follows RFC 2119: MUST, MUST NOT, SHOULD, MAY.
 
 ### 2.1 Definition
 
-An **event** is the atomic unit of market activity processed by TickForge.
+An **event** is the atomic unit of market activity processed by TickDots.
 Every state change in the simulated book is caused by exactly one event.
 Events are immutable once created: a correction is a new event, never a
 mutation of an old one.
@@ -148,7 +148,7 @@ source dataset listed the events.
 ### 4.1 Formal statement
 
 > Given identical input events, identical configuration, and identical
-> TickForge version, the simulator MUST produce identical outputs.
+> TickDots version, the simulator MUST produce identical outputs.
 
 ### 4.2 Meaning of "identical output"
 
@@ -163,7 +163,7 @@ Two runs are identical iff all of the following are byte-identical:
 
 "Identical configuration" includes the session config file, the instrument
 tick/lot definitions, and every parameter of the microstructure model.
-"Identical TickForge version" is the `tickforge::kVersion` string; output
+"Identical TickDots version" is the `tickdots::kVersion` string; output
 artifacts MUST embed it so a mismatch is detectable.
 
 ### 4.3 Randomness
@@ -341,7 +341,7 @@ Stage responsibilities:
    level aggregates) after each event.
 6. **Execution Results:** fill records, queue-position traces for
    designated simulated orders, and statistics. All outputs embed the
-   TickForge version and the configuration hash.
+   TickDots version and the configuration hash.
 
 ---
 
@@ -351,8 +351,8 @@ Stage responsibilities:
   tick/lot sizes, matching rule selection, microstructure model
   parameters, PRNG seeds, strict/lenient error mode.
 * The configuration MUST be serializable to a file, and output artifacts
-  MUST embed its hash alongside the TickForge version.
-* The project version (`tickforge::kVersion`, single source of truth in
+  MUST embed its hash alongside the TickDots version.
+* The project version (`tickdots::kVersion`, single source of truth in
   `CMakeLists.txt`) follows semantic versioning. Spec changes that alter
   simulation results REQUIRE a minor or major version bump.
 
@@ -390,18 +390,18 @@ Stage responsibilities:
 
 ## 13. Command-line interface
 
-The `tickforge` executable replays one CSV event file through the
+The `tickdots` executable replays one CSV event file through the
 library pipeline (sections 9 and 11). This section defines its
 contract; behavior not specified here is not part of the CLI.
 
 ### 13.1 Invocation and options
 
 ```text
-tickforge --input PATH --instrument SYMBOL [--mode strict|lenient]
+tickdots --input PATH --instrument SYMBOL [--mode strict|lenient]
                    [--tick-size VALUE] [--lot-size VALUE] [--seed VALUE]
                    [--latency-min-ns VALUE] [--latency-max-ns VALUE]
-tickforge --help
-tickforge --version
+tickdots --help
+tickdots --version
 ```
 
 * `--input PATH` (required for replay): the CSV file to replay.
@@ -437,7 +437,7 @@ tickforge --version
   it disabled. `--seed` alone does not enable it, and a seed's
   existing meaning is unchanged when the model is disabled.
 * `--help`: prints usage to standard output and exits 0.
-* `--version`: prints `TickForge v<version>` and exits 0.
+* `--version`: prints `TickDots v<version>` and exits 0.
 
 Each option may appear at most once. Unknown options, positional
 arguments, missing option values, empty values, and invalid mode
@@ -477,7 +477,7 @@ a header-only file is a valid replay of zero events (exit 0).
 On success the summary is printed to standard output, exactly:
 
 ```text
-TickForge v<version>
+TickDots v<version>
 Input: <path as given>
 Instrument: <symbol>
 Replay mode: <strict|lenient>

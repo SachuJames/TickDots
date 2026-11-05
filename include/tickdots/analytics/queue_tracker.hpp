@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -36,7 +36,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace tickforge {
+namespace tickdots {
 
 class QueueTracker {
 public:
@@ -101,4 +101,4 @@ private:
   void resetForNew(OrderId id, Quantity quantity);
 };
 
-} // namespace tickforge
+} // namespace tickdots

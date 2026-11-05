@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-namespace tickforge::test {
+namespace tickdots::test {
 
 CsvGenerator::CsvGenerator(const CsvGeneratorConfig& config) : config_(config), rng_(config.seed) {}
 
@@ -179,4 +179,4 @@ std::vector<MalformedCase> generateMalformedTable() {
   };
 }
 
-} // namespace tickforge::test
+} // namespace tickdots::test

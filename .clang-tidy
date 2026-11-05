@@ -1,4 +1,4 @@
-# TickForge clang-tidy baseline (Day 01).
+# TickDots clang-tidy baseline (Day 01).
 # Deliberately small: bug classes, analyzer, and safe modernizations only.
 # Run with: clang-tidy <files> -p <build dir>
 # See CONTRIBUTING.md for the local workflow.
@@ -23,7 +23,7 @@ Checks: >-
   -misc-include-cleaner
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'tickforge/.*'
+HeaderFilterRegex: 'tickdots/.*'
 CheckOptions:
   - key: readability-identifier-naming.NamespaceCase
     value: lower_case

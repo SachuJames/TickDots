@@ -10,14 +10,14 @@
 #pragma once
 
 #include "bench/harness.hpp"
-#include "tickforge/event/event.hpp"
+#include "tickdots/event/event.hpp"
 
 #include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
 
-namespace tickforge::bench {
+namespace tickdots::bench {
 
 struct Workload {
   std::string name;
@@ -53,4 +53,4 @@ struct Workload {
 // Preparation for the parse-and-replay pipeline benchmark.
 [[nodiscard]] PrepareFn parseReplayPrepare(std::string csvText, std::string instrument);
 
-} // namespace tickforge::bench
+} // namespace tickdots::bench

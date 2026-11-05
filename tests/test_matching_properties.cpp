@@ -4,10 +4,10 @@
 // price priority, FIFO priority, no-overfill, and determinism. These test
 // general properties rather than single scenarios.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
 
 #include <cstdint>
 #include <gtest/gtest.h>
@@ -15,18 +15,18 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::Fill;
-using tickforge::MatchingEngine;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::RestingOrder;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::Fill;
+using tickdots::MatchingEngine;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::RestingOrder;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event newOrderEvent(
     Timestamp ts, Sequence seq, OrderId id, Side side, Price price, Quantity quantity) {
@@ -105,7 +105,7 @@ TEST(MatchingPropertyTest, ExecutionConservationResting) {
 
   // Order 1: 10 filled, 0 remaining. Order 2: 15 filled, 5 remaining.
   expectFillsPerRestingOrder(engine.fills(), OrderId{1}, OrderId{2}, 10, 15);
-  const tickforge::RestingOrder order2 = book.find(OrderId{2}).value_or(tickforge::RestingOrder{});
+  const tickdots::RestingOrder order2 = book.find(OrderId{2}).value_or(tickdots::RestingOrder{});
   std::int64_t filled2 = 0;
   for (const Fill& fill : engine.fills()) {
     if (fill.restingId == OrderId{2}) {

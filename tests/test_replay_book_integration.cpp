@@ -6,9 +6,9 @@
 // determinism: the same event vector replayed twice yields equivalent
 // observable state.
 
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -19,16 +19,16 @@
 
 namespace {
 
-using tickforge::Event;
-using tickforge::EventType;
-using tickforge::OrderBook;
-using tickforge::OrderId;
-using tickforge::Price;
-using tickforge::Quantity;
-using tickforge::ReplayResult;
-using tickforge::Sequence;
-using tickforge::Side;
-using tickforge::Timestamp;
+using tickdots::Event;
+using tickdots::EventType;
+using tickdots::OrderBook;
+using tickdots::OrderId;
+using tickdots::Price;
+using tickdots::Quantity;
+using tickdots::ReplayResult;
+using tickdots::Sequence;
+using tickdots::Side;
+using tickdots::Timestamp;
 
 Event newOrderEvent(Sequence seq, OrderId id, Side side, Price price, Quantity quantity) {
   Event event;
@@ -68,10 +68,10 @@ Event modifyEvent(Sequence seq, OrderId id, Price price, Quantity quantity) {
 }
 
 // Returns the resting order; fails the test if it is absent.
-tickforge::RestingOrder requireOrder(const OrderBook& book, OrderId id) {
+tickdots::RestingOrder requireOrder(const OrderBook& book, OrderId id) {
   const auto found = book.find(id);
   EXPECT_TRUE(found.has_value()) << "expected order " << id.value() << " in the book";
-  return found.value_or(tickforge::RestingOrder{});
+  return found.value_or(tickdots::RestingOrder{});
 }
 
 // Observable market state, comparable by value. Deliberately avoids any
@@ -93,7 +93,7 @@ BookSnapshot snapshotBook(const OrderBook& book, const std::vector<OrderId>& ids
     if (!found.has_value()) {
       continue;
     }
-    const tickforge::RestingOrder order = *found;
+    const tickdots::RestingOrder order = *found;
     snapshot.orders.emplace_back(id.value(),
                                  static_cast<std::uint8_t>(order.side),
                                  order.price.ticks(),
@@ -121,7 +121,7 @@ TEST(ReplayBookIntegrationTest, NewCancelFlow) {
   };
 
   OrderBook book;
-  const ReplayResult result = tickforge::replayEvents(events, book);
+  const ReplayResult result = tickdots::replayEvents(events, book);
   EXPECT_TRUE(result.ok());
 
   EXPECT_EQ(book.orderCount(), 2U);
@@ -141,14 +141,14 @@ TEST(ReplayBookIntegrationTest, ModifyFlow) {
   };
 
   OrderBook book;
-  const ReplayResult result = tickforge::replayEvents(events, book);
+  const ReplayResult result = tickdots::replayEvents(events, book);
   EXPECT_TRUE(result.ok());
 
   const auto level = book.ordersAtLevel(Side::Ask, Price{101});
   ASSERT_EQ(level.size(), 2U);
   EXPECT_EQ(level[0], OrderId{1});
   EXPECT_EQ(level[1], OrderId{2});
-  const tickforge::RestingOrder order = requireOrder(book, OrderId{1});
+  const tickdots::RestingOrder order = requireOrder(book, OrderId{1});
   EXPECT_EQ(order.quantity, Quantity{40});
   EXPECT_EQ(order.arrivalSeq, Sequence{0});
 }
@@ -165,9 +165,9 @@ TEST(ReplayBookIntegrationTest, SameInputReplaysToEquivalentState) {
   const std::vector<OrderId> ids = {OrderId{1}, OrderId{2}, OrderId{3}, OrderId{4}};
 
   OrderBook first;
-  EXPECT_TRUE(tickforge::replayEvents(events, first).ok());
+  EXPECT_TRUE(tickdots::replayEvents(events, first).ok());
   OrderBook second;
-  EXPECT_TRUE(tickforge::replayEvents(events, second).ok());
+  EXPECT_TRUE(tickdots::replayEvents(events, second).ok());
 
   EXPECT_EQ(snapshotBook(first, ids), snapshotBook(second, ids));
 }
@@ -181,8 +181,8 @@ TEST(ReplayBookIntegrationTest, ReplayAbortsAtFirstError) {
   };
 
   OrderBook book;
-  const ReplayResult result = tickforge::replayEvents(events, book);
-  EXPECT_EQ(result.error, tickforge::ReplayError::UnknownOrder);
+  const ReplayResult result = tickdots::replayEvents(events, book);
+  EXPECT_EQ(result.error, tickdots::ReplayError::UnknownOrder);
   EXPECT_EQ(result.failedAt, Sequence{2});
 
   // Strict-mode abort: the first two events stay applied, the rest never run.
@@ -197,8 +197,8 @@ TEST(ReplayBookIntegrationTest, UnsortedStreamNeverTouchesTheBook) {
   };
 
   OrderBook book;
-  const ReplayResult result = tickforge::replayEvents(events, book);
-  EXPECT_EQ(result.error, tickforge::ReplayError::UnsortedInput);
+  const ReplayResult result = tickdots::replayEvents(events, book);
+  EXPECT_EQ(result.error, tickdots::ReplayError::UnsortedInput);
   // The first event was dispatched before the ordering violation surfaced.
   EXPECT_EQ(book.orderCount(), 1U);
   EXPECT_TRUE(book.contains(OrderId{1}));

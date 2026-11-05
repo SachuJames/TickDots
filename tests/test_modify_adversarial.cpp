@@ -13,12 +13,12 @@
 
 #include "tests/support/event_generator.hpp"
 #include "tests/support/reference_model.hpp"
-#include "tickforge/analytics/execution_statistics.hpp"
-#include "tickforge/analytics/queue_tracker.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/matching/fill.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/replay/replay.hpp"
+#include "tickdots/analytics/execution_statistics.hpp"
+#include "tickdots/analytics/queue_tracker.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/matching/fill.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/replay/replay.hpp"
 
 #include <cstdlib>
 #include <gtest/gtest.h>
@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 
-namespace tickforge::test {
+namespace tickdots::test {
 namespace {
 
 // Wraps MatchingEngine to accumulate fills across all events.
@@ -574,11 +574,11 @@ TEST(ModifyAdversarial, GeneratedModificationsDeterministic) {
   }
 }
 
-// Extended stress: TICKFORGE_EXTENDED=1 enables more seeds and longer
+// Extended stress: TICKDOTS_EXTENDED=1 enables more seeds and longer
 // modification-heavy sequences.
 TEST(ModifyAdversarial, ExtendedStress) {
-  if (std::getenv("TICKFORGE_EXTENDED") == nullptr) {
-    GTEST_SKIP() << "Set TICKFORGE_EXTENDED=1 to run the extended stress profile.";
+  if (std::getenv("TICKDOTS_EXTENDED") == nullptr) {
+    GTEST_SKIP() << "Set TICKDOTS_EXTENDED=1 to run the extended stress profile.";
   }
   std::size_t totalModifies = 0;
   for (std::uint64_t seed = 1; seed <= 10; ++seed) {
@@ -600,4 +600,4 @@ TEST(ModifyAdversarial, ExtendedStress) {
 }
 
 } // namespace
-} // namespace tickforge::test
+} // namespace tickdots::test

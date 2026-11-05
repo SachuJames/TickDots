@@ -6,20 +6,20 @@
 #include "bench/workloads.hpp"
 
 #include "tests/support/event_generator.hpp"
-#include "tickforge/book/order_book.hpp"
-#include "tickforge/core/splitmix64.hpp"
-#include "tickforge/event/event.hpp"
-#include "tickforge/market_data/csv_parser.hpp"
-#include "tickforge/matching/matching_engine.hpp"
-#include "tickforge/model/latency_model.hpp"
-#include "tickforge/model/latency_observer.hpp"
-#include "tickforge/replay/replay.hpp"
-#include "tickforge/replay/session_config.hpp"
+#include "tickdots/book/order_book.hpp"
+#include "tickdots/core/splitmix64.hpp"
+#include "tickdots/event/event.hpp"
+#include "tickdots/market_data/csv_parser.hpp"
+#include "tickdots/matching/matching_engine.hpp"
+#include "tickdots/model/latency_model.hpp"
+#include "tickdots/model/latency_observer.hpp"
+#include "tickdots/replay/replay.hpp"
+#include "tickdots/replay/session_config.hpp"
 
 #include <sstream>
 #include <stdexcept>
 
-namespace tickforge::bench {
+namespace tickdots::bench {
 namespace {
 
 const std::vector<std::string>& names() {
@@ -427,4 +427,4 @@ PrepareFn parseReplayPrepare(std::string csvText, std::string instrument) {
   };
 }
 
-} // namespace tickforge::bench
+} // namespace tickdots::bench

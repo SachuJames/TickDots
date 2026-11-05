@@ -1,6 +1,6 @@
 # Contributor Covenant Code of Conduct (summary)
 
-TickForge is an open research and engineering project. Everyone participating is expected to act professionally and respectfully.
+TickDots is an open research and engineering project. Everyone participating is expected to act professionally and respectfully.
 
 ## Our standards
 
