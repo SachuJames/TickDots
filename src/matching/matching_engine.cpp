@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <optional>
 
 namespace tickforge {
 
@@ -81,15 +82,21 @@ void MatchingEngine::matchAggressor(OrderId aggressorId,
   Quantity remaining = quantity;
   const Side opposite = side == Side::Bid ? Side::Ask : Side::Bid;
 
-  // Price levels arrive best-first, so the first non-crossing level ends
-  // the sweep: no worse price can be eligible.
-  for (const Price levelPrice : book_.priceLevels(opposite)) {
-    if (remaining.lots() <= 0) {
+  // Walk the opposite side best-first, one level at a time, using
+  // the book's best-price query. Levels arrive in matching order and
+  // the first non-crossing level ends the sweep, exactly as the
+  // previous full-list enumeration did, but a non-crossing
+  // aggressor now costs one map read instead of a materialized
+  // vector of every level, and a crossing one only enumerates the
+  // levels it actually consumes. A level the loop leaves with
+  // quantity remaining is fully consumed, so the next iteration's
+  // best price is a new level and the walk always progresses.
+  while (remaining.lots() > 0) {
+    const std::optional<Price> best = opposite == Side::Ask ? book_.bestAsk() : book_.bestBid();
+    if (!best.has_value() || !crosses(side, limitPrice, *best)) {
       break;
     }
-    if (!crosses(side, limitPrice, levelPrice)) {
-      break;
-    }
+    const Price levelPrice = *best;
     for (const OrderId restingId : book_.ordersAtLevel(opposite, levelPrice)) {
       if (remaining.lots() <= 0) {
         break;
