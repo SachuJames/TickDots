@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.22)
 project(tickdots
   VERSION 0.2.0
   DESCRIPTION "Deterministic market microstructure simulator"
-  HOMEPAGE_URL "https://github.com/SachuJames/tickdots"
+  HOMEPAGE_URL "https://github.com/SachuJames/TickDots"
   LANGUAGES CXX
 )
 

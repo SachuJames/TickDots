@@ -6,7 +6,7 @@
 
 <img src="docs/images/hero.webp" alt="TickDots" width="100%"/>
 
-[![CI](https://github.com/SachuJames/tickdots/actions/workflows/ci.yml/badge.svg)](https://github.com/SachuJames/tickdots/actions/workflows/ci.yml)
+[![CI](https://github.com/SachuJames/TickDots/actions/workflows/ci.yml/badge.svg)](https://github.com/SachuJames/TickDots/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 ![C++20](https://img.shields.io/badge/C++-20-blue.svg)
 ![CMake](https://img.shields.io/badge/CMake-3.22+-064F8C.svg)
@@ -74,7 +74,7 @@ first configure, so the first configure needs network access. The library
 and the CLI have no third-party dependencies.
 
 ```bash
-git clone https://github.com/SachuJames/tickdots.git
+git clone https://github.com/SachuJames/TickDots.git
 cd tickdots
 cmake --preset default
 cmake --build --preset default -j4
