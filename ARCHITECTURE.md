@@ -1625,3 +1625,89 @@ Each run records the TickForge version, the commit the build was
 configured from, the compiler, and the build type. Timing is an
 observed quantity: it varies with the machine and its load, and
 results from different environments are not directly comparable.
+
+## 29. First optimization: walk levels, do not list them (Day 27)
+
+Day 26 built the measurement system; Day 27 used it to make one
+change. Profiling used Callgrind from Valgrind 3.22 (instruction
+counts, RelWithDebInfo build with frame pointers). The sandbox
+has no perf tooling and perf_event_paranoid is 4, so sampling
+profiles were not available; instruction counts are
+deterministic and machine-independent, at the cost of not
+measuring cache or branch effects directly.
+
+On add-heavy (100,000 non-crossing insertions), the profile of
+the whole benchmark run (425.1M instructions, including the
+untimed verification pass) put the allocator family first at
+roughly 39%, and directly behind it the cost of one pattern:
+MatchingEngine::matchAggressor began every call by
+materializing OrderBook::priceLevels(opposite), a heap
+allocated vector holding every price level on the opposite
+side, built by walking the level map. priceLevels accounted
+for about 14% of instructions itself, most of the 13% spent in
+std::_Rb_tree_increment, and one allocation and free per
+aggressor event. An order that does not cross at all, which is
+every order in add-heavy and most replacements in
+modify-heavy, paid the full enumeration just to discover the
+first level does not cross. The mixed profile showed the same
+pattern at a smaller share, under a larger allocator cost.
+
+The change is confined to matchAggressor. The sweep now walks
+the opposite side level by level through the book's existing
+best-price query (bestBid/bestAsk, a map begin read): check
+the best level, stop if it does not cross, process that
+level's orders through the unchanged ordersAtLevel snapshot,
+repeat. Visit order is identical (best price first, FIFO
+within a level), so fill order and content are unchanged; the
+progress argument is that a level left with quantity remaining
+was fully consumed and removed, so the next best price is a
+new level. A non-crossing aggressor costs one map read; a
+crossing one enumerates only the levels it consumes. No public
+API changed, and priceLevels remains available to its other
+caller (market data snapshots, where a full list is the
+point).
+
+Measured on the sandbox VM (AMD EPYC 9D64, GNU 13.3.0,
+Release, size 100000, seed 1901, 2 warm-ups, 7 repetitions,
+medians), before and after in the same session:
+
+| Workload | Before | After | Change |
+|---|---:|---:|---:|
+| add-heavy | 34.41 ms (2.91M ev/s) | 20.42 ms (4.90M ev/s) | -40.7% |
+| cancel-heavy | 10.29 ms | 10.63 ms | +3.3% |
+| modify-heavy | 18.10 ms (5.52M ev/s) | 11.92 ms (8.39M ev/s) | -34.1% |
+| match-heavy | 13.64 ms (7.33M fills/s) | 15.00 ms (6.67M fills/s) | +9.9% |
+| mixed | 21.97 ms (4.55M ev/s) | 19.10 ms (5.24M ev/s) | -13.0% |
+| parse-only | 21.71 ms | 22.43 ms | +3.3% |
+| parse-replay | 45.26 ms | 42.87 ms | -5.3% |
+| latency-overhead | 25.72 ms | 20.69 ms | -19.5% |
+
+The machine drifts: absolute times on this shared VM moved
+measurably within the session (parse-only and match-heavy
+roughly doubled between the first runs and a later control
+run). A second, interleaved A/B comparison in one window,
+rebuilding each variant in turn, is the calibration: add-heavy
+-45.1% and mixed -11.0% repeated, while cancel-heavy (+3.3%),
+parse-only (+4.1%), and match-heavy (+3.9%) moved together.
+The cancel and parse paths contain none of the changed code,
+so their movement is environment drift, and match-heavy
+tracks it: the sweep-heavy workload, which always crossed and
+always enumerated every level it consumed, neither gained nor
+measurably lost. The gains concentrate exactly where the
+profile said the waste was: paths dominated by non-crossing
+aggressors (add-heavy, modify replacements, and the engine
+share of mixed, parse-replay, and latency-overhead). All
+workloads produced identical outcomes before and after
+(events, fills, resting counts), enforced per repetition by
+the harness.
+
+A post-change Callgrind run on add-heavy totals 267.7M
+instructions against 425.1M before (-37%), and priceLevels no
+longer appears in the profile. What remains on top is the
+per-order allocation path itself: the list node and hash entry
+allocated for every resting order, and their frees. That is
+the next profiling question, not an assumption; it would mean
+touching container or allocator choices in OrderBook, a
+larger and riskier change than this one. These figures are
+observations on one shared VM on one day, under the stated
+configuration; they are not a general performance claim.
