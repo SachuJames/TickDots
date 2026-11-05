@@ -2,10 +2,10 @@
 //
 // Session-scale end-to-end verification.
 //
-// A deterministic 6000-event session is produced by the Day 11
+// A deterministic 6000-event session is produced by the
 // EventGenerator (lifecycle-aware, valid by construction), serialized
 // to CSV, parsed back with the production CsvParser, and replayed
-// through OrderBook + MatchingEngine while the independent Day 11
+// through OrderBook + MatchingEngine while the independent
 // ReferenceBook computes the expected outcome of every event. Fills
 // are compared field by field after each event, along with resting
 // order count and best bid/ask. ExecutionStatistics are checked
@@ -46,7 +46,7 @@ GeneratorConfig sessionConfig() {
   return config;
 }
 
-// Serializes events in the parser's CSV format (Day 12 conventions:
+// Serializes events in the parser's CSV format (parser conventions:
 // zero price/quantity on modify/cancel records become empty fields).
 std::string serializeSession(const std::vector<Event>& events) {
   std::ostringstream out;

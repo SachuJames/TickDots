@@ -49,7 +49,7 @@ bool MatchingEngine::processModify(const Event& event) {
     return false;
   }
 
-  // Zero means "unchanged" (Day 02 encoding, enforced by validateEvent).
+  // Zero means "unchanged" (the event encoding, enforced by validateEvent).
   const Price newPrice = event.price.ticks() != 0 ? event.price : current->price;
   const Quantity newQuantity = event.quantity.lots() != 0 ? event.quantity : current->quantity;
   const bool priceChanged = newPrice != current->price;

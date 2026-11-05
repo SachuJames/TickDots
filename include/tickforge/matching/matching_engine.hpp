@@ -27,7 +27,7 @@
 //   * A ModifyOrder whose price change makes it cross is treated as
 //     cancel/replace (SPEC.md 5.5) and matches as an aggressor with the
 //     modify event's timestamp/seq. A modify that does not newly cross is
-//     handled by the book's Day 03 semantics.
+//     handled by the book's own event handling.
 //   * Self-trade by order id is impossible: a NewOrder with a live id is
 //     rejected as a duplicate (SPEC.md 5.1), so an aggressor never meets
 //     its own id in the book. No participant fields exist; self-trade

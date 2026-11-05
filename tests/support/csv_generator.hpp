@@ -7,7 +7,7 @@
 //   A. Valid CSV streams conforming to the audited parser contract.
 //   B. Malformed/adversarial streams via controlled mutations.
 //
-// Uses the Day 11 DeterministicRng. Same config -> same output.
+// Uses the DeterministicRng. Same config -> same output.
 // Every generated case is reproducible from seed + config.
 
 #pragma once

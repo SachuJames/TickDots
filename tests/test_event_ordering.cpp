@@ -1,8 +1,8 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
 // Property-style tests for the canonical (timestamp, sequence) ordering.
-// These invariants are foundational: the deterministic replay of Day 03+
-// depends on this ordering being a strict weak ordering with stable,
+// These invariants are foundational: deterministic replay depends
+// on this ordering being a strict weak ordering with stable,
 // repeatable sorts.
 
 #include "tickforge/event/event.hpp"

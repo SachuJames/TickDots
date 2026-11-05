@@ -345,7 +345,7 @@ TEST(OrderBookTest, ModifyUnknownOrderIsRejected) {
 }
 
 TEST(OrderBookTest, CrossingOrderRestsWithoutMatching) {
-  // Day 03 performs no matching: a crossing order rests in the book.
+  // The book performs no matching: a crossing order rests in the book.
   // This documents the interim behavior until the matching engine lands.
   OrderBook book;
   EXPECT_TRUE(

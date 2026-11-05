@@ -99,7 +99,7 @@ TEST(EventTest, EventKeyExtraction) {
 }
 
 TEST(EventTest, SameTimestampOrdersBySequence) {
-  // From the Day 02 task: A(ts=100, seq=4) < B(ts=100, seq=5).
+  // A(ts=100, seq=4) < B(ts=100, seq=5).
   const Event a = makeNewOrder(Timestamp{100}, Sequence{4}, OrderId{1});
   const Event b = makeNewOrder(Timestamp{100}, Sequence{5}, OrderId{2});
   EXPECT_LT(a, b);
@@ -108,7 +108,7 @@ TEST(EventTest, SameTimestampOrdersBySequence) {
 }
 
 TEST(EventTest, TimestampDominatesSequence) {
-  // From the Day 02 task: C(ts=99, seq=100) < D(ts=100, seq=0).
+  // C(ts=99, seq=100) < D(ts=100, seq=0).
   const Event c = makeNewOrder(Timestamp{99}, Sequence{100}, OrderId{1});
   const Event d = makeNewOrder(Timestamp{100}, Sequence{0}, OrderId{2});
   EXPECT_LT(c, d);

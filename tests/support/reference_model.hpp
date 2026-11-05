@@ -12,7 +12,7 @@
 //
 // Where the specification leaves room for interpretation, this model
 // follows the production contract (e.g. "0 means unchanged" in
-// ModifyOrder, from the Day 02 event encoding). Any divergence found
+// ModifyOrder, from the event encoding). Any divergence found
 // between this model and production is investigated as a potential
 // defect; the model itself is validated against hand-calculated cases
 // in test_reference_model.cpp.

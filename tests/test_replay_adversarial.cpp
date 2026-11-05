@@ -4,7 +4,7 @@
 // otherwise valid event sequences, verifying the replay driver's
 // ordering, instrument, validation, and dispatch contracts.
 //
-// Uses Day 11's EventGenerator for valid baseline sequences and the
+// Uses the EventGenerator for valid baseline sequences and the
 // independent ReferenceBook as a differential oracle. Every case is
 // deterministic from its seed. Mutations are applied one at a time;
 // each test documents the expected contract outcome.

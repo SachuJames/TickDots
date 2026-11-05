@@ -409,7 +409,7 @@ TEST_F(CliFixture, RelativeAndAbsolutePaths) {
 }
 
 // ---------------------------------------------------------------------
-// Session-scale end-to-end (Day 19)
+// Session-scale end-to-end
 // ---------------------------------------------------------------------
 
 namespace {
@@ -538,14 +538,14 @@ TEST_F(CliFixture, GeneratedSessionWithTrailingErrorEvent) {
 }
 
 // ---------------------------------------------------------------------
-// CLI session-configuration options (Day 20)
+// CLI session-configuration options
 // ---------------------------------------------------------------------
 
 namespace {
 
 // The expected CLI config hash, computed by the library itself from
 // the equivalent SessionConfig (serializeConfig/hashConfig are the
-// Day 15 contract; the CLI must report the replay result's hash).
+// contract; the CLI must report the replay result's hash).
 std::string libraryHash(const tickforge::SessionConfig& config) {
   return std::string(tickforge::formatConfigHash(tickforge::hashConfig(config)));
 }
@@ -644,7 +644,7 @@ TEST_F(CliFixture, DuplicateConfigOptionsRejected) {
 }
 
 TEST_F(CliFixture, DefaultsUnchangedByNewOptions) {
-  // A command with no new options keeps the Day 18/19 default hash.
+  // A command with no new options keeps the default hash.
   const std::string path = writeFile("cross.csv", kCrossCsv);
   const ProcResult result = runOn(path);
   ASSERT_EQ(result.exitCode, 0);
@@ -653,7 +653,7 @@ TEST_F(CliFixture, DefaultsUnchangedByNewOptions) {
 }
 
 // ---------------------------------------------------------------------
-// Committed quick-start example (Day 21)
+// Committed quick-start example
 // ---------------------------------------------------------------------
 
 #ifndef TICKFORGE_EXAMPLE_CSV

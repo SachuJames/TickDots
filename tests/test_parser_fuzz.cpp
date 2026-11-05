@@ -2,7 +2,7 @@
 //
 // Parser fuzz tests: deterministic adversarial CSV inputs.
 //
-// Uses the Day 11 DeterministicRng and the new CsvGenerator. Every case
+// Uses the DeterministicRng and the new CsvGenerator. Every case
 // is reproducible from its seed. Tests verify:
 //   - Valid generated streams parse successfully
 //   - Malformed inputs produce the expected error (not success)

@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
 // MBO order book implementation. See include/tickforge/book/order_book.hpp
-// for the representation and the Day 03 scope notes.
+// for the representation and scope notes.
 
 #include "tickforge/book/order_book.hpp"
 
@@ -157,8 +157,8 @@ void OrderBook::removeFromLevel(LevelMap& levels, Entry& entry) {
 }
 
 bool OrderBook::applyNew(const Event& event) {
-  // Note: no matching here. OrderBook::onEvent keeps Day 03 semantics;
-  // aggressive handling is the MatchingEngine's job.
+  // Note: no matching here. OrderBook::onEvent applies orders as
+  // given; aggressive handling is the MatchingEngine's job.
   return addRestingOrder(event.orderId, event.side, event.price, event.quantity, event.sequence);
 }
 
@@ -173,7 +173,7 @@ bool OrderBook::applyModify(const Event& event) {
   }
   Entry& entry = it->second;
 
-  // Zero means "unchanged" (Day 02 encoding, enforced by validateEvent).
+  // Zero means "unchanged" (the event encoding, enforced by validateEvent).
   const Price newPrice = event.price.ticks() != 0 ? event.price : entry.order.price;
   const Quantity newQuantity = event.quantity.lots() != 0 ? event.quantity : entry.order.quantity;
 

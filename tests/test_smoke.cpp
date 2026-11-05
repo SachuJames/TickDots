@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// Day 01 smoke test: proves the test binary builds, links against the
+// Smoke test: proves the test binary builds, links against the
 // TickForge core headers, runs under CTest, and sees the project version.
 
 #include "tickforge/version.hpp"
@@ -11,8 +11,8 @@
 namespace {
 
 TEST(SmokeTest, EngineInitializes) {
-  // Day 01: the engine has no subsystems yet. Reaching this point proves the
-  // test executable links and runs against the TickForge core headers.
+  // Reaching this point proves the test executable links and runs
+  // against the TickForge core headers.
   SUCCEED();
 }
 

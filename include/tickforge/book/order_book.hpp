@@ -13,12 +13,12 @@
 //   * Within a price level, queue order is arrivalSeq order (FIFO). Order
 //     ids never determine priority: ids identify, sequences order.
 //
-// Day 03 scope notes:
+// Scope notes:
 //   * The book performs no matching itself. Matching is the
-//     MatchingEngine's job (Day 04); the engine drives the book through
-//     the public mutation API below. OrderBook::onEvent retains Day 03
-//     semantics: a NewOrder rests without matching. Aggressive handling
-//     belongs to the engine.
+//     MatchingEngine's job; the engine drives the book through
+//     the public mutation API below. OrderBook::onEvent applies
+//     events directly: a NewOrder rests without matching.
+//     Aggressive handling belongs to the engine.
 //   * ModifyOrder follows SPEC.md 5.5 exactly: a price change or quantity
 //     increase is cancel/replace (loses time priority, arrivalSeq becomes
 //     the modify event's seq); a quantity decrease at the same price keeps
@@ -74,7 +74,7 @@ public:
   // All price levels on the side, in priority order (best first).
   [[nodiscard]] std::vector<Price> priceLevels(Side side) const;
 
-  // Controlled mutation API for the matching engine (Day 04). These are
+  // Controlled mutation API for the matching engine. These are
   // the only way to mutate the book besides onEvent; the engine must not
   // reach into the book's containers.
   //

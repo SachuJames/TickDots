@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Sachu James. SPDX-License-Identifier: Apache-2.0.
 //
-// Integration tests for the Day 03 pipeline: normalized events flow
+// Integration tests for the book pipeline: normalized events flow
 // through the deterministic replay driver into the MBO order book, and
 // the resulting market state is inspected. Also proves replay
 // determinism: the same event vector replayed twice yields equivalent
